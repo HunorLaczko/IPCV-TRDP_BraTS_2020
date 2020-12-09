@@ -39,8 +39,8 @@ If you face any problem, please feel free to open an issue.
 
 ## Packages
 - Python >= 3.5 (my current version is 3.7.7)
-- tensorflowgpu==1.15 (other 1.x version should work)
-- Other packages: pytables, SimpleITK, nilearn, nibabel
+- tensorflow-gpu==2.3.1 with keras 2.4.3
+- Other packages: tables, SimpleITK, nilearn, nibabel
 - Optional package: nipype (For n4itk bias correction preprocessing only. However, I didn't achieve that much performance gain using this technique!)
 
 ## How to run
@@ -55,19 +55,8 @@ $ ./train.sh
 $ ./inference.sh
 ~~~
 
-## Results on validation set
-Label		Dice_ET	Dice_WT	Dice_TC	Sensitivity_ET	Sensitivity_WT	Sensitivity_TC	Specificity_ET	Specificity_WT	Specificity_TC	Hausdorff95_ET	Hausdorff95_WT	Hausdorff95_TC
-
-Mean		0.60954	0.82701	0.74769	0.66736	0.86277	0.75625	0.99939	0.99834	0.99931	46.96773	10.70035	11.63979
-
-StdDev		0.31934	0.15026	0.21439	0.33152	0.14198	0.22683	0.00098	0.00127	0.00108	112.51574	17.23635	18.01854
-
-Median		0.7783	0.87372	0.84036	0.81398	0.90829	0.85127	0.99967	0.99875	0.99967	3.60555		5.47723		5.74456
-
-25quantile	0.44618	0.814	0.63882	0.5355	0.83669	0.64064	0.99921	0.998	0.99928	2		3.74166		3
-
-75quantile	0.84443	0.90629	0.89807	0.89286	0.94265	0.91698	0.99987	0.99916	0.99987	15.67788	10.44031	12.36932
-
-
 ## Acknowledgment
+This is a fork of [akhanss' repository](https://github.com/akhanss/BraTS-2020) which was updated and slightly modified.
+
+Original:
 Significant code has been borrowed from [ellisdg's repository](https://github.com/ellisdg/3DUnetCNN) which is based on [Isensee et al.'s paper](https://doi.org/10.1007/978-3-030-11726-9_21). I really appreciate David G Ellis's contributions to the community.
