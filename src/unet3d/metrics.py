@@ -1,6 +1,8 @@
 from functools import partial
 
 from keras import backend as K
+import tensorflow as tf
+import numpy as np
 
 
 def dice_coefficient(y_true, y_pred, smooth=1.):
@@ -42,6 +44,47 @@ def get_label_dice_coefficient_function(label_index):
     f = partial(label_wise_dice_coefficient, label_index=label_index)
     f.__setattr__('__name__', 'label_{0}_dice_coef'.format(label_index))
     return f
+
+def waveloss(InputGT, Enhanced):  
+    InputGT = K.cast(InputGT,"float32")
+
+
+    IntersSection = tf.math.minimum(Enhanced, InputGT)
+    Union = tf.math.maximum(Enhanced, InputGT)
+
+    # print(IntersSection.numpy().shape)
+    # print(Union.numpy().shape)
+    # print(np.sum(IntersSection.numpy()))
+    # print(np.sum(Union.numpy()))
+    # print(np.sum(InputGT.numpy()))
+    # print(np.sum(Enhanced.numpy()))
+
+
+    CurrentWave = tf.math.minimum(Enhanced, InputGT)
+    ValueIncrease = 0.1
+    NumSteps = int(1 / ValueIncrease)
+    ValueWeights = np.arange(1, NumSteps + 1) / 10.0
+    TopologyWeights = np.arange(1, NumSteps + 1) / 10.0
+    WaveLoss = 0
+    for step in range(int(1 / ValueIncrease)):
+        # Value Propagation:
+        Growed = CurrentWave + ValueIncrease
+        # cut off with Union
+        Growed = tf.math.minimum(Growed, Union)
+        # value.append(Growed.numpy())
+        ValueDiff = tf.reduce_sum(Growed - CurrentWave)
+        # print('valuediff: ', ValueDiff.numpy())
+        # Spatial Propagation:
+        Growed = tf.nn.max_pool3d(Growed, 8, 1, padding='SAME', data_format='NCDHW')
+        Growed = tf.math.minimum(Growed, Union)
+        # spatial.append(Growed.numpy())
+        TopologyDiff = tf.reduce_sum(Growed - CurrentWave)
+        # print('topologydiff: ', TopologyDiff.numpy())
+        CurrentWave = Growed
+        WaveLoss = WaveLoss + ValueWeights[step] * ValueDiff + TopologyWeights[step] * TopologyDiff
+        # print('waveloss: ', WaveLoss.numpy())
+
+    return WaveLoss
 
 
 dice_coef = dice_coefficient

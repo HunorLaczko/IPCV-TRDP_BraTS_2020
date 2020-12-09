@@ -8,7 +8,8 @@ from keras.models import load_model
 import tensorflow as tf
 
 from unet3d.metrics import (dice_coefficient, dice_coefficient_loss, dice_coef, dice_coef_loss,
-                            weighted_dice_coefficient_loss, weighted_dice_coefficient)
+                            weighted_dice_coefficient_loss, weighted_dice_coefficient, get_label_dice_coefficient_function)
+
 
 # K.set_image_dim_ordering('th')
 # (Azam) Ref.: https://github.com/keras-team/keras/issues/12649
@@ -46,7 +47,10 @@ def load_old_model(model_file):
     custom_objects = {'dice_coefficient_loss': dice_coefficient_loss, 'dice_coefficient': dice_coefficient,
                       'dice_coef': dice_coef, 'dice_coef_loss': dice_coef_loss,
                       'weighted_dice_coefficient': weighted_dice_coefficient,
-                      'weighted_dice_coefficient_loss': weighted_dice_coefficient_loss}
+                      'weighted_dice_coefficient_loss': weighted_dice_coefficient_loss,
+                      'label_0_dice_coef': get_label_dice_coefficient_function(0),
+                      'label_1_dice_coef': get_label_dice_coefficient_function(1),
+                      'label_2_dice_coef': get_label_dice_coefficient_function(2)}
     try:
         from keras_contrib.layers import InstanceNormalization
         custom_objects["InstanceNormalization"] = InstanceNormalization
