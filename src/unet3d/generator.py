@@ -225,7 +225,7 @@ def add_data(x_list, y_list, data_file, index, augment=False, augment_flip=False
 
     if not skip_blank or np.any(truth != 0):
         x_list.append(data)
-        y_list.append(truth)
+        y_list.append(truth.astype(dtype='float32'))
 
 
 def get_data_from_file(data_file, index, patch_shape=None):

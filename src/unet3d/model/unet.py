@@ -1,7 +1,7 @@
 import numpy as np
 from keras import backend as K
 from keras.engine import Input, Model
-from keras.layers import Conv3D, MaxPooling3D, UpSampling3D, Activation, BatchNormalization, PReLU, Deconvolution3D
+from keras.layers import Conv3D, MaxPooling3D, UpSampling3D, Activation, BatchNormalization, PReLU, Conv3DTranspose
 from keras.optimizers import Adam
 
 from unet3d.metrics import dice_coefficient_loss, get_label_dice_coefficient_function, dice_coefficient
@@ -129,7 +129,7 @@ def compute_level_output_shape(n_filters, depth, pool_size, image_shape):
 def get_up_convolution(n_filters, pool_size, kernel_size=(2, 2, 2), strides=(2, 2, 2),
                        deconvolution=False):
     if deconvolution:
-        return Deconvolution3D(filters=n_filters, kernel_size=kernel_size,
+        return Conv3DTranspose(filters=n_filters, kernel_size=kernel_size,
                                strides=strides)
     else:
         return UpSampling3D(size=pool_size)
