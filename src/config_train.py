@@ -1,7 +1,10 @@
 import os
+import datetime
 
 config = dict()
-config["image_shape"] = (128, 128, 128)  # This determines what shape the images will be cropped/resampled to.
+config["experiment_name"] = "waveloss_attention_1_"
+
+config["image_shape"] = (64, 64, 64)  # This determines what shape the images will be cropped/resampled to.
 config["patch_shape"] = None  # switch to None to train on the whole image
 config["labels"] = (1, 2, 4)  # the label numbers on the input image
 config["n_base_filters"] = 16
@@ -18,7 +21,7 @@ config["deconvolution"] = True  # if False, will use upsampling instead of decon
 
 config["batch_size"] = 1
 config["validation_batch_size"] = 1
-config["n_epochs"] = 500  # cutoff the training after this many epochs, default 500
+config["n_epochs"] = 70  # cutoff the training after this many epochs, default 500
 config["patience"] = 30  # learning rate will be reduced after this many epochs if the validation loss is not improving
 config["early_stop"] = 60  # training will be stopped after this many epochs without the validation loss improving
 config["initial_learning_rate"] = 1e-4
@@ -33,17 +36,21 @@ config["training_patch_start_offset"] = (16, 16, 16)  # randomly offset the firs
 config["skip_blank"] = True  # if True, then patches without any target will be skipped
 
 # To be changed accordingly, if it is required.
-config["img_dir"] = "./data/model/brats20/TrainingData"
-config["label_dir"] = "./data/model/brats20/TrainingData"
-config["test_dir"] = "./data/model/brats20/ValidationData" # or change 'ValidationData' --> 'TestData' when you predict for test data
+config["img_dir"] = "/autofs/unitytravail/travail/hlaczko/data/MICCAI_BraTS2020_TrainingData"
+config["label_dir"] = "/autofs/unitytravail/travail/hlaczko/data/MICCAI_BraTS2020_TrainingData"
+config["test_dir"] = "/autofs/unitytravail/travail/hlaczko/data/MICCAI_BraTS2020_ValidationData" # or change 'ValidationData' --> 'TestData' when you predict for test data
 config["num_test_files"] = 125 # Currently, this is number of validation files, change it to number of test files when you predict for test files
 
-config["data_file"] = "./data/model/brats20_data.h5"
-config["data_file_test"] = "./data/model/brats20_data_test.h5"
-config["model_file"] = "./data/model/isensee_2017_model.h5"
+config["data_file"] = "/autofs/unitytravail/travail/hlaczko/model/brats20_data.h5"
+config["data_file_test"] = "/autofs/unitytravail/travail/hlaczko/model/brats20_data_test.h5"
+config["model_file"] = "/autofs/unitytravail/travail/hlaczko/model/isensee_2017_model_" + config["experiment_name"] + "_" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + ".h5"
 
-config["training_file"] = "./data/model/training_ids.pkl"
-config["validation_file"] = "./data/model/validation_ids.pkl"
-config["test_file"] = "./data/model/test_ids.pkl"
+config["training_file"] = "/autofs/unitytravail/travail/hlaczko/data/model/training_ids.pkl"
+config["validation_file"] = "/autofs/unitytravail/travail/hlaczko/data/model/validation_ids.pkl"
+config["test_file"] = "/autofs/unitytravail/travail/hlaczko/data/model/test_ids.pkl"
+
+config["use_tensorboard"] = True
+config["tensorboard_logdir"] = "/autofs/unitytravail/travail/hlaczko/logs/" + config["experiment_name"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
 
 config["overwrite"] = False  # If True, will previous files. If False, will use previously written files.

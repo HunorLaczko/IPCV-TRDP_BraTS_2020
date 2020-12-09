@@ -2,8 +2,10 @@ import math
 from functools import partial
 
 from keras import backend as K
-from keras.callbacks import ModelCheckpoint, CSVLogger, LearningRateScheduler, ReduceLROnPlateau, EarlyStopping
+from keras.callbacks import ModelCheckpoint, CSVLogger, LearningRateScheduler, ReduceLROnPlateau, EarlyStopping, TensorBoard
 from keras.models import load_model
+
+import tensorflow as tf
 
 from unet3d.metrics import (dice_coefficient, dice_coefficient_loss, dice_coef, dice_coef_loss,
                             weighted_dice_coefficient_loss, weighted_dice_coefficient)
@@ -20,7 +22,7 @@ def step_decay(epoch, initial_lrate, drop, epochs_drop):
 
 def get_callbacks(model_file, initial_learning_rate=0.0001, learning_rate_drop=0.5, learning_rate_epochs=None,
                   learning_rate_patience=50, logging_file="training.log", verbosity=1,
-                  early_stopping_patience=None):
+                  early_stopping_patience=None, use_tensorboard=True, tensorboard_logdir='.'):
     callbacks = list()
     callbacks.append(ModelCheckpoint(model_file, save_best_only=True))
     # callbacks.append(CSVLogger(logging_file, append=True))
@@ -32,6 +34,10 @@ def get_callbacks(model_file, initial_learning_rate=0.0001, learning_rate_drop=0
                                            verbose=verbosity))
     if early_stopping_patience:
         callbacks.append(EarlyStopping(verbose=verbosity, patience=early_stopping_patience))
+
+    if use_tensorboard:
+        callbacks.append(TensorBoard(log_dir=tensorboard_logdir, histogram_freq = 1, profile_batch = 2))
+
     return callbacks
 
 
@@ -58,7 +64,8 @@ def load_old_model(model_file):
 
 def train_model(model, model_file, training_generator, validation_generator, steps_per_epoch, validation_steps,
                 initial_learning_rate=0.001, learning_rate_drop=0.5, learning_rate_epochs=None, n_epochs=500,
-                learning_rate_patience=20, early_stopping_patience=None):
+                learning_rate_patience=20, early_stopping_patience=None, use_tensorboard=True, 
+                tensorboard_logdir='.'):
     """
     Train a Keras model.
     :param early_stopping_patience: If set, training will end early if the validation loss does not improve after the
@@ -77,14 +84,20 @@ def train_model(model, model_file, training_generator, validation_generator, ste
     :param n_epochs: Total number of epochs to train the model.
     :return: 
     """
+
     model.fit_generator(generator=training_generator,
                         steps_per_epoch=steps_per_epoch,
                         epochs=n_epochs,
                         validation_data=validation_generator,
                         validation_steps=validation_steps,
+                        verbose=1,
                         callbacks=get_callbacks(model_file,
                                                 initial_learning_rate=initial_learning_rate,
                                                 learning_rate_drop=learning_rate_drop,
                                                 learning_rate_epochs=learning_rate_epochs,
                                                 learning_rate_patience=learning_rate_patience,
-                                                early_stopping_patience=early_stopping_patience))
+                                                early_stopping_patience=early_stopping_patience,
+                                                use_tensorboard=use_tensorboard,
+                                                tensorboard_logdir=tensorboard_logdir))
+
+    

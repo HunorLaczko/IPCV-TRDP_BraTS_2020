@@ -1,5 +1,7 @@
 import os
 import glob
+import json
+import datetime
 
 from unet3d.data import write_data_to_file, open_data_file
 from unet3d.generator import get_training_and_validation_generators
@@ -29,6 +31,9 @@ def fetch_training_data_files(return_subject_ids=False):
 
 def main(overwrite=False):
 
+    with open("/autofs/unitytravail/travail/hlaczko/configs/" + config["experiment_name"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + ".txt", "w") as f:
+        f.write(json.dumps(config)) 
+
     # convert input (train) images into an hdf5 file
     if overwrite or not os.path.exists(config["data_file"]):
         training_files, subject_ids = fetch_training_data_files(return_subject_ids=True)
@@ -41,11 +46,13 @@ def main(overwrite=False):
 
     if not overwrite and os.path.exists(config["model_file"]):
         model = load_old_model(config["model_file"])
+        print("Loading old model")
     else:
         # instantiate new model
         model = isensee2017_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
                                   initial_learning_rate=config["initial_learning_rate"],
                                   n_base_filters=config["n_base_filters"])
+        print("Creating new model")
 
     # get training and testing generators
     train_generator, validation_generator, n_train_steps, n_validation_steps = get_training_and_validation_generators(
@@ -78,7 +85,9 @@ def main(overwrite=False):
                 learning_rate_drop=config["learning_rate_drop"],
                 learning_rate_patience=config["patience"],
                 early_stopping_patience=config["early_stop"],
-                n_epochs=config["n_epochs"])
+                n_epochs=config["n_epochs"],
+                use_tensorboard=config["use_tensorboard"],
+                tensorboard_logdir=config["tensorboard_logdir"])
     
     data_file_opened.close()
 
