@@ -56,7 +56,7 @@ $ ./inference.sh
 ~~~
 
 ## Acknowledgment
-This is a fork of [akhanss' repository](https://github.com/akhanss/BraTS-2020) which was updated and slightly modified.
+This is a copy of [akhanss' repository](https://github.com/akhanss/BraTS-2020) which was updated and slightly modified.
 
-Original:
+Originally:
 Significant code has been borrowed from [ellisdg's repository](https://github.com/ellisdg/3DUnetCNN) which is based on [Isensee et al.'s paper](https://doi.org/10.1007/978-3-030-11726-9_21). I really appreciate David G Ellis's contributions to the community.
