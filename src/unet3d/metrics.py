@@ -87,5 +87,9 @@ def waveloss(InputGT, Enhanced):
     return WaveLoss
 
 
+def labelwise_waveloss(y_true, y_pred):
+      waveloss(y_true[:,:,:,:, 0:1], y_pred[:,:,:,:, 0:1]) + waveloss(y_true[:,:,:,:, 1:2], y_pred[:,:,:,:, 1:2]) + waveloss(y_true[:,:,:,:, 2:], y_pred[:,:,:,:, 2:])
+
+
 dice_coef = dice_coefficient
 dice_coef_loss = dice_coefficient_loss

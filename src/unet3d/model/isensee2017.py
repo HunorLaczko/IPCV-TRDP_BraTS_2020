@@ -6,7 +6,7 @@ from keras.optimizers import Adam
 from keras import backend as K
 
 from .unet import create_convolution_block, concatenate
-from ..metrics import weighted_dice_coefficient_loss, waveloss
+from ..metrics import weighted_dice_coefficient_loss, waveloss, labelwise_waveloss
 from ..metrics import weighted_dice_coefficient, dice_coefficient_loss, get_label_dice_coefficient_function, dice_coefficient
 
 
@@ -93,7 +93,7 @@ def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5
         else:
             metrics = label_wise_dice_metrics
 
-    model.compile(optimizer=optimizer(lr=initial_learning_rate), loss=waveloss, metrics=metrics)
+    model.compile(optimizer=optimizer(lr=initial_learning_rate), loss=labelwise_waveloss, metrics=metrics)
     return model
 
 
