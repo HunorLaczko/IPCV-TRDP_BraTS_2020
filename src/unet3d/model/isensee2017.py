@@ -93,7 +93,7 @@ def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5
         else:
             metrics = label_wise_dice_metrics
 
-    model.compile(optimizer=optimizer(lr=initial_learning_rate), loss=labelwise_waveloss, metrics=metrics)
+    model.compile(optimizer=optimizer(lr=initial_learning_rate), loss=waveloss(ValW=np.geomspace(1, 10, 10), SpaW=np.geomspace(1, 10, 10)), metrics=metrics)
     return model
 
 
