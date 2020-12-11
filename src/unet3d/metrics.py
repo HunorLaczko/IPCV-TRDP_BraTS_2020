@@ -46,7 +46,7 @@ def get_label_dice_coefficient_function(label_index):
     return f
 
 
-def waveloss(ValInc=0.1, SpaInc=8, ValW, SpaW, NumSteps=10):
+def waveloss(ValW, SpaW, ValInc=0.1, SpaInc=8, NumSteps=10):
     def _waveloss(InputGT, Enhanced):  
         InputGT = K.cast(InputGT,"float32")
 

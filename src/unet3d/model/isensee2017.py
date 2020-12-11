@@ -1,4 +1,5 @@
 from functools import partial
+import numpy as np
 
 from keras.layers import Input, LeakyReLU, Add, UpSampling3D, Activation, SpatialDropout3D, Conv3D, GlobalAveragePooling3D, GlobalMaxPooling3D, Dense, Reshape, Permute, multiply, Concatenate, Lambda
 from keras.engine import Model
