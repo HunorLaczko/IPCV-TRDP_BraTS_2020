@@ -2,11 +2,13 @@ import os
 import glob
 import json
 import datetime
+import numpy as np
 
 from unet3d.data import write_data_to_file, open_data_file
 from unet3d.generator import get_training_and_validation_generators
 from unet3d.model import isensee2017_model
 from unet3d.training import load_old_model, train_model
+from unet3d.metrics import weighted_dice_coefficient_loss, waveloss
 
 from config_train import config
 
@@ -49,9 +51,32 @@ def main(overwrite=False):
         print("Loading old model")
     else:
         # instantiate new model
+        loss_function = weighted_dice_coefficient_loss
+
+        if config["waveloss_use"]:
+            num_steps = config["waveloss_num_steps"]            
+            spa_w = []
+            val_w = []
+
+            if config["waveloss_spaw_log"]:
+                spa_w = np.geomspace(0.1, 1, num_steps)
+            else:
+                spa_w = np.linspace(0.1, 1, num_steps)
+
+            if config["waveloss_valw_log"]:
+                val_w = np.geomspace(0.1, 1, num_steps)
+            else:
+                val_w = np.linspace(0.1, 1, num_steps)
+
+            loss_function = waveloss(val_w, spa_w, ValInc=config["waveloss_valinc"], SpaInc=config["waveloss_spainc"],
+                                     NumSteps=num_steps, labelwise=True)
+
+
         model = isensee2017_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
                                   initial_learning_rate=config["initial_learning_rate"],
-                                  n_base_filters=config["n_base_filters"])
+                                  n_base_filters=config["n_base_filters"], depth=config["depth"],
+                                  n_segmentation_levels=config["n_segmentation_levels"],
+                                  dropout_rate=config["dropout_rate"], loss_function=loss_function)
         print("Creating new model")
 
     # get training and testing generators

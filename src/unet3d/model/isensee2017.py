@@ -1,5 +1,4 @@
 from functools import partial
-import numpy as np
 
 from keras.layers import Input, LeakyReLU, Add, UpSampling3D, Activation, SpatialDropout3D, Conv3D, GlobalAveragePooling3D, GlobalMaxPooling3D, Dense, Reshape, Permute, multiply, Concatenate, Lambda
 from keras.engine import Model
@@ -14,10 +13,10 @@ from ..metrics import weighted_dice_coefficient, dice_coefficient_loss, get_labe
 create_convolution_block = partial(create_convolution_block, activation=LeakyReLU, instance_normalization=True)
 
 
-def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5, dropout_rate=0.3, width = 48,
+def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5, dropout_rate=0.3,
                       n_segmentation_levels=3, n_labels=4, optimizer=Adam, initial_learning_rate=5e-4,
-                      loss_function=weighted_dice_coefficient_loss,
-                      metrics=weighted_dice_coefficient, include_label_wise_dice_coefficients=True, activation_name="sigmoid"):
+                      loss_function=weighted_dice_coefficient_loss, metrics=weighted_dice_coefficient,
+                      include_label_wise_dice_coefficients=True, activation_name="sigmoid"):
     """
     This function builds a model proposed by Isensee et al. for the BRATS 2017 competition:
     https://www.cbica.upenn.edu/sbia/Spyridon.Bakas/MICCAI_BraTS/MICCAI_BraTS_2017_proceedings_shortPapers.pdf
@@ -94,7 +93,7 @@ def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5
         else:
             metrics = label_wise_dice_metrics
 
-    model.compile(optimizer=optimizer(lr=initial_learning_rate), loss=waveloss(ValW=np.geomspace(1, 10, 10), SpaW=np.geomspace(1, 10, 10), labelwise=True), metrics=metrics)
+    model.compile(optimizer=optimizer(lr=initial_learning_rate), loss=loss_function, metrics=metrics)
     return model
 
 
