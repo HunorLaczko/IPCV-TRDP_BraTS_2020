@@ -22,7 +22,7 @@ config["deconvolution"] = True  # if False, will use upsampling instead of decon
 
 config["batch_size"] = 1
 config["validation_batch_size"] = 1
-config["n_epochs"] = 150  # cutoff the training after this many epochs, default 500
+config["n_epochs"] = 1  # cutoff the training after this many epochs, default 500
 config["patience"] = 30  # learning rate will be reduced after this many epochs if the validation loss is not improving
 config["early_stop"] = 60  # training will be stopped after this many epochs without the validation loss improving
 config["initial_learning_rate"] = 1e-4
@@ -42,7 +42,7 @@ config["label_dir"] = config["base_folder"] + "data/MICCAI_BraTS2020_TrainingDat
 config["test_dir"] = config["base_folder"] + "data/MICCAI_BraTS2020_ValidationData" # or change 'ValidationData' --> 'TestData' when you predict for test data
 config["num_test_files"] = 125 # Currently, this is number of validation files, change it to number of test files when you predict for test files
 
-config["data_file"] = "//home/lachu/workspace/model/brats20_data.h5"
+config["data_file"] = config["base_folder"] + "model/brats20_data.h5"
 config["data_file_test"] = config["base_folder"] + "model/brats20_data_test.h5"
 config["model_file"] = config["base_folder"] + "model/isensee_2017_model_" + config["experiment_name"] + "_" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + ".h5"
 
