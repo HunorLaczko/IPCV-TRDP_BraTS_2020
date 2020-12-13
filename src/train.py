@@ -31,7 +31,7 @@ def fetch_training_data_files(return_subject_ids=False):
 
 def main(overwrite=False):
 
-    with open("/autofs/unitytravail/travail/hlaczko/configs/" + config["experiment_name"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + ".txt", "w") as f:
+    with open(config["base_folder"] + "configs/" + config["experiment_name"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + ".txt", "w") as f:
         f.write(json.dumps(config)) 
 
     # convert input (train) images into an hdf5 file

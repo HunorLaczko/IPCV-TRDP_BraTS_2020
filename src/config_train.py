@@ -3,6 +3,7 @@ import datetime
 
 config = dict()
 config["experiment_name"] = "waveloss_labelwise_"
+config["base_folder"] = "/autofs/unitytravail/travail/hlaczko/"
 
 config["image_shape"] = (64, 64, 64)  # This determines what shape the images will be cropped/resampled to.
 config["patch_shape"] = None  # switch to None to train on the whole image
@@ -36,21 +37,21 @@ config["training_patch_start_offset"] = (16, 16, 16)  # randomly offset the firs
 config["skip_blank"] = True  # if True, then patches without any target will be skipped
 
 # To be changed accordingly, if it is required.
-config["img_dir"] = "/home/lachu/workspace/data/MICCAI_BraTS2020_TrainingData"
-config["label_dir"] = "/home/lachu/workspace/data/MICCAI_BraTS2020_TrainingData"
-config["test_dir"] = "/home/lachu/workspace/data/MICCAI_BraTS2020_ValidationData" # or change 'ValidationData' --> 'TestData' when you predict for test data
+config["img_dir"] = config["base_folder"] + "data/MICCAI_BraTS2020_TrainingData"
+config["label_dir"] = config["base_folder"] + "data/MICCAI_BraTS2020_TrainingData"
+config["test_dir"] = config["base_folder"] + "data/MICCAI_BraTS2020_ValidationData" # or change 'ValidationData' --> 'TestData' when you predict for test data
 config["num_test_files"] = 125 # Currently, this is number of validation files, change it to number of test files when you predict for test files
 
 config["data_file"] = "//home/lachu/workspace/model/brats20_data.h5"
-config["data_file_test"] = "/home/lachu/workspace/model/brats20_data_test.h5"
-config["model_file"] = "/home/lachu/workspace/model/isensee_2017_model_" + config["experiment_name"] + "_" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + ".h5"
+config["data_file_test"] = config["base_folder"] + "model/brats20_data_test.h5"
+config["model_file"] = config["base_folder"] + "model/isensee_2017_model_" + config["experiment_name"] + "_" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + ".h5"
 
-config["training_file"] = "/home/lachu/workspace/data/model/training_ids.pkl"
-config["validation_file"] = "/home/lachu/workspace/data/model/validation_ids.pkl"
-config["test_file"] = "/home/lachu/workspace/data/model/test_ids.pkl"
+config["training_file"] = config["base_folder"] + "data/model/training_ids.pkl"
+config["validation_file"] = config["base_folder"] + "data/model/validation_ids.pkl"
+config["test_file"] = config["base_folder"] + "data/model/test_ids.pkl"
 
 config["use_tensorboard"] = True
-config["tensorboard_logdir"] = "/home/lachu/workspace/logs/" + config["experiment_name"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+config["tensorboard_logdir"] = config["base_folder"] + "logs/" + config["experiment_name"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
 
 config["overwrite"] = False  # If True, will previous files. If False, will use previously written files.
