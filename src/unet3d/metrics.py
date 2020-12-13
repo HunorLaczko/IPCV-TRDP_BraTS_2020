@@ -46,14 +46,14 @@ def get_label_dice_coefficient_function(label_index):
     return f
 
 
-def waveloss(ValW, SpaW, ValInc=0.1, SpaInc=8, NumSteps=10):
-    def _waveloss(InputGT, Enhanced):  
-        InputGT = K.cast(InputGT,"float32")
+def waveloss(ValW, SpaW, ValInc=0.1, SpaInc=8, NumSteps=10, labelwise=False):
+    def _waveloss(y_true, y_pred):  
+        y_true = K.cast(y_true,"float32")
 
-        IntersSection = tf.math.minimum(Enhanced, InputGT)
-        Union = tf.math.maximum(Enhanced, InputGT)
+        IntersSection = tf.math.minimum(y_pred, y_true)
+        Union = tf.math.maximum(y_pred, y_true)
 
-        CurrentWave = tf.math.minimum(Enhanced, InputGT)
+        CurrentWave = tf.math.minimum(y_pred, y_true)
         WaveLoss = 0
 
         for step in range(NumSteps):
@@ -67,11 +67,13 @@ def waveloss(ValW, SpaW, ValInc=0.1, SpaInc=8, NumSteps=10):
             WaveLoss = WaveLoss + ValW[step] * ValueDiff + SpaW[step] * TopologyDiff
 
         return WaveLoss
+
+    if labelwise:
+        def _labelwise_waveloss(y_true, y_pred):
+            return _waveloss(y_true[:,0:1,:,:,:], y_pred[:,0:1,:,:,:]) + _waveloss(y_true[:,1:2,:,:,:], y_pred[:,1:2,:,:,:]) + _waveloss(y_true[:,2:,:,:,:], y_pred[:,2:,:,:,:])
+        return _labelwise_waveloss
+
     return _waveloss
-
-
-def labelwise_waveloss(y_true, y_pred):
-      waveloss(y_true[:,:,:,:, 0:1], y_pred[:,:,:,:, 0:1]) + waveloss(y_true[:,:,:,:, 1:2], y_pred[:,:,:,:, 1:2]) + waveloss(y_true[:,:,:,:, 2:], y_pred[:,:,:,:, 2:])
 
 
 dice_coef = dice_coefficient
