@@ -13,6 +13,7 @@ config["n_labels"] = len(config["labels"])
 config["depth"] = 5
 config["n_segmentation_levels"] = 3
 config["dropout_rate"] = 0.3
+config["deconvolution"] = True
 
 config["all_modalities"] = ["t1", "t1ce", "t2", "flair"]
 config["training_modalities"] = config["all_modalities"]  # change this if you want to only use some of the modalities

@@ -76,7 +76,8 @@ def main(overwrite=False):
                                   initial_learning_rate=config["initial_learning_rate"],
                                   n_base_filters=config["n_base_filters"], depth=config["depth"],
                                   n_segmentation_levels=config["n_segmentation_levels"],
-                                  dropout_rate=config["dropout_rate"], loss_function=loss_function)
+                                  dropout_rate=config["dropout_rate"], deconvolution=config["deconvolution"],
+                                  loss_function=loss_function)
         print("Creating new model")
 
     # get training and testing generators
