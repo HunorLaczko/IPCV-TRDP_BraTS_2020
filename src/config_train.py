@@ -24,6 +24,7 @@ else:
     config["input_shape"] = tuple([config["nb_channels"]] + list(config["image_shape"]))
 config["truth_channel"] = config["nb_channels"]
 config["deconvolution"] = True  # if False, will use upsampling instead of deconvolution
+config["deconvolution_last"] = False  # if False, will use upsampling instead of deconvolution
 
 config["batch_size"] = 1
 config["validation_batch_size"] = 1

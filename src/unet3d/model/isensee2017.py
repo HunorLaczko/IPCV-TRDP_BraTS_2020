@@ -14,9 +14,9 @@ create_convolution_block = partial(create_convolution_block, activation=LeakyReL
 
 
 def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5, dropout_rate=0.3,
-                      n_segmentation_levels=3, n_labels=4, deconvolution=False, optimizer=Adam, initial_learning_rate=5e-4,
-                      loss_function=weighted_dice_coefficient_loss, metrics=weighted_dice_coefficient,
-                      include_label_wise_dice_coefficients=True, activation_name="sigmoid"):
+                      n_segmentation_levels=3, n_labels=4, deconvolution=False, deconvolution_last=False, 
+                      optimizer=Adam, initial_learning_rate=5e-4, loss_function=weighted_dice_coefficient_loss,
+                      metrics=weighted_dice_coefficient, include_label_wise_dice_coefficients=True, activation_name="sigmoid"):
     """
     This function builds a model proposed by Isensee et al. for the BRATS 2017 competition:
     https://www.cbica.upenn.edu/sbia/Spyridon.Bakas/MICCAI_BraTS/MICCAI_BraTS_2017_proceedings_shortPapers.pdf
@@ -77,7 +77,7 @@ def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5
             output_layer = Add()([output_layer, segmentation_layer])
 
         if level_number > 0:
-            output_layer = get_up_convolution(n_filters=output_layer.shape[1], pool_size=(2, 2, 2), deconvolution=deconvolution)(output_layer) # UpSampling3D(size=(2, 2, 2))(output_layer)
+            output_layer = get_up_convolution(n_filters=output_layer.shape[1], pool_size=(2, 2, 2), deconvolution=deconvolution_last)(output_layer)
 
     activation_block = Activation(activation_name)(output_layer)
 

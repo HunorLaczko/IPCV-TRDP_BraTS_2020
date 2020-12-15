@@ -77,7 +77,7 @@ def main(overwrite=False):
                                   n_base_filters=config["n_base_filters"], depth=config["depth"],
                                   n_segmentation_levels=config["n_segmentation_levels"],
                                   dropout_rate=config["dropout_rate"], deconvolution=config["deconvolution"],
-                                  loss_function=loss_function)
+                                  deconvolution_last=config["deconvolution_last"], loss_function=loss_function)
         print("Creating new model")
 
     # get training and testing generators
