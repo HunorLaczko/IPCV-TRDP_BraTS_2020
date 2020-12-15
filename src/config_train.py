@@ -2,14 +2,19 @@ import os
 import datetime
 
 config = dict()
-config["experiment_name"] = "waveloss_labelwise_"
-config["base_folder"] = "/autofs/unitytravail/travail/hlaczko/"
+config["experiment_name"] = "test_"
+config["base_folder"] = "/home/lachu/workspace/"
 
 config["image_shape"] = (64, 64, 64)  # This determines what shape the images will be cropped/resampled to.
 config["patch_shape"] = None  # switch to None to train on the whole image
 config["labels"] = (1, 2, 4)  # the label numbers on the input image
 config["n_base_filters"] = 16
 config["n_labels"] = len(config["labels"])
+config["depth"] = 5
+config["n_segmentation_levels"] = 3
+config["dropout_rate"] = 0.3
+config["deconvolution"] = True
+
 config["all_modalities"] = ["t1", "t1ce", "t2", "flair"]
 config["training_modalities"] = config["all_modalities"]  # change this if you want to only use some of the modalities
 config["nb_channels"] = len(config["training_modalities"])
@@ -19,6 +24,7 @@ else:
     config["input_shape"] = tuple([config["nb_channels"]] + list(config["image_shape"]))
 config["truth_channel"] = config["nb_channels"]
 config["deconvolution"] = True  # if False, will use upsampling instead of deconvolution
+config["deconvolution_last"] = False  # if False, will use upsampling instead of deconvolution
 
 config["batch_size"] = 1
 config["validation_batch_size"] = 1
@@ -53,5 +59,12 @@ config["test_file"] = config["base_folder"] + "data/model/test_ids.pkl"
 config["use_tensorboard"] = True
 config["tensorboard_logdir"] = config["base_folder"] + "logs/" + config["experiment_name"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
-
 config["overwrite"] = False  # If True, will previous files. If False, will use previously written files.
+
+config["waveloss_use"] = True       # Use waveloss as a loss function, otherwise use weighted dice loss
+config["waveloss_spaw_log"] = True  # Use logarithmically increasing spatial weights for waloss, otherwise use linearly increasing
+config["waveloss_valw_log"] = True  # Use logarithmically increasing value weights for waloss, otherwise use linearly increasing
+config["waveloss_spainc"] = 8       # Spatial increase step size
+config["waveloss_valinc"] = 0.1     # Value increase step size
+config["waveloss_num_steps"] = 10   # Number of iterations for one comparison
+
