@@ -77,7 +77,7 @@ def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5
             output_layer = Add()([output_layer, segmentation_layer])
 
         if level_number > 0:
-            output_layer = UpSampling3D(size=(2, 2, 2))(output_layer)
+            output_layer = get_up_convolution(n_filters=output_layer.shape[1], pool_size=(2, 2, 2), deconvolution=deconvolution)(output_layer) # UpSampling3D(size=(2, 2, 2))(output_layer)
 
     activation_block = Activation(activation_name)(output_layer)
 
