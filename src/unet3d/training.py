@@ -87,19 +87,19 @@ def train_model(model, model_file, training_generator, validation_generator, ste
     :return: 
     """
 
-    model.fit_generator(generator=training_generator,
-                        steps_per_epoch=steps_per_epoch,
-                        epochs=n_epochs,
-                        validation_data=validation_generator,
-                        validation_steps=validation_steps,
-                        verbose=1,
-                        callbacks=get_callbacks(model_file,
-                                                initial_learning_rate=initial_learning_rate,
-                                                learning_rate_drop=learning_rate_drop,
-                                                learning_rate_epochs=learning_rate_epochs,
-                                                learning_rate_patience=learning_rate_patience,
-                                                early_stopping_patience=early_stopping_patience,
-                                                use_tensorboard=use_tensorboard,
-                                                tensorboard_logdir=tensorboard_logdir))
+    model.fit(training_generator,
+              steps_per_epoch=steps_per_epoch,
+              epochs=n_epochs,
+              validation_data=validation_generator,
+              validation_steps=validation_steps,
+              verbose=2,
+              callbacks=get_callbacks(model_file,
+                                      initial_learning_rate=initial_learning_rate,
+                                      learning_rate_drop=learning_rate_drop,
+                                      learning_rate_epochs=learning_rate_epochs,
+                                      learning_rate_patience=learning_rate_patience,
+                                      early_stopping_patience=early_stopping_patience,
+                                      use_tensorboard=use_tensorboard,
+                                      tensorboard_logdir=tensorboard_logdir))
 
     

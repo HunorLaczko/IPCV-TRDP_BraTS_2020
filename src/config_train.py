@@ -2,18 +2,21 @@ import os
 import datetime
 
 config = dict()
-config["experiment_name"] = "test_"
-config["base_folder"] = "/home/lachu/workspace/"
+config["experiment_name"] = "final_waveloss_3_no_attention_"
+config["base_folder"] = "/net/cremi/hlaczko/espaces/travail/"
 
-config["image_shape"] = (64, 64, 64)  # This determines what shape the images will be cropped/resampled to.
+config["image_shape"] = (128, 128, 128)  # This determines what shape the images will be cropped/resampled to.
 config["patch_shape"] = None  # switch to None to train on the whole image
 config["labels"] = (1, 2, 4)  # the label numbers on the input image
 config["n_base_filters"] = 16
 config["n_labels"] = len(config["labels"])
-config["depth"] = 5
-config["n_segmentation_levels"] = 3
+config["depth"] = 7
+config["n_segmentation_levels"] = 6
 config["dropout_rate"] = 0.3
-config["deconvolution"] = True
+config["deconvolution"] = True  # if False, will use upsampling instead of deconvolution
+config["deconvolution_last"] = True  # if False, will use upsampling instead of deconvolution
+config["use_attention"] = False
+config["attention_ratio"] = 16
 
 config["all_modalities"] = ["t1", "t1ce", "t2", "flair"]
 config["training_modalities"] = config["all_modalities"]  # change this if you want to only use some of the modalities
@@ -23,14 +26,12 @@ if "patch_shape" in config and config["patch_shape"] is not None:
 else:
     config["input_shape"] = tuple([config["nb_channels"]] + list(config["image_shape"]))
 config["truth_channel"] = config["nb_channels"]
-config["deconvolution"] = True  # if False, will use upsampling instead of deconvolution
-config["deconvolution_last"] = False  # if False, will use upsampling instead of deconvolution
 
 config["batch_size"] = 1
 config["validation_batch_size"] = 1
-config["n_epochs"] = 1  # cutoff the training after this many epochs, default 500
+config["n_epochs"] = 300  # cutoff the training after this many epochs, default 500
 config["patience"] = 30  # learning rate will be reduced after this many epochs if the validation loss is not improving
-config["early_stop"] = 60  # training will be stopped after this many epochs without the validation loss improving
+config["early_stop"] = 120  # training will be stopped after this many epochs without the validation loss improving
 config["initial_learning_rate"] = 1e-4
 config["learning_rate_drop"] = 0.1  # factor by which the learning rate will be reduced
 config["validation_split"] = 0.9  # portion of the data that will be used for training
@@ -62,9 +63,10 @@ config["tensorboard_logdir"] = config["base_folder"] + "logs/" + config["experim
 config["overwrite"] = False  # If True, will previous files. If False, will use previously written files.
 
 config["waveloss_use"] = True       # Use waveloss as a loss function, otherwise use weighted dice loss
+config["waveloss_labelwise"] = False
 config["waveloss_spaw_log"] = True  # Use logarithmically increasing spatial weights for waloss, otherwise use linearly increasing
 config["waveloss_valw_log"] = True  # Use logarithmically increasing value weights for waloss, otherwise use linearly increasing
-config["waveloss_spainc"] = 8       # Spatial increase step size
+config["waveloss_spainc"] = 5       # Spatial increase step size
 config["waveloss_valinc"] = 0.1     # Value increase step size
 config["waveloss_num_steps"] = 10   # Number of iterations for one comparison
 

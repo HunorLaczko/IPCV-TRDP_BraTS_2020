@@ -69,7 +69,7 @@ def main(overwrite=False):
                 val_w = np.linspace(0.1, 1, num_steps)
 
             loss_function = waveloss(val_w, spa_w, ValInc=config["waveloss_valinc"], SpaInc=config["waveloss_spainc"],
-                                     NumSteps=num_steps, labelwise=True)
+                                     NumSteps=num_steps, labelwise=config["waveloss_labelwise"])
 
 
         model = isensee2017_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
@@ -77,7 +77,8 @@ def main(overwrite=False):
                                   n_base_filters=config["n_base_filters"], depth=config["depth"],
                                   n_segmentation_levels=config["n_segmentation_levels"],
                                   dropout_rate=config["dropout_rate"], deconvolution=config["deconvolution"],
-                                  deconvolution_last=config["deconvolution_last"], loss_function=loss_function)
+                                  deconvolution_last=config["deconvolution_last"], use_attention=config["use_attention"], 
+                                  attention_ratio=config["attention_ratio"], loss_function=loss_function)
         print("Creating new model")
 
     # get training and testing generators

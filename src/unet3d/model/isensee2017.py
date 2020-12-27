@@ -13,8 +13,8 @@ from ..metrics import weighted_dice_coefficient, dice_coefficient_loss, get_labe
 create_convolution_block = partial(create_convolution_block, activation=LeakyReLU, instance_normalization=True)
 
 
-def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5, dropout_rate=0.3,
-                      n_segmentation_levels=3, n_labels=4, deconvolution=False, deconvolution_last=False, 
+def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5, dropout_rate=0.3, n_segmentation_levels=3,
+                      n_labels=4, deconvolution=False, deconvolution_last=False, use_attention=True, attention_ratio=8,
                       optimizer=Adam, initial_learning_rate=5e-4, loss_function=weighted_dice_coefficient_loss,
                       metrics=weighted_dice_coefficient, include_label_wise_dice_coefficients=True, activation_name="sigmoid"):
     """
@@ -54,7 +54,9 @@ def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5
         context_output_layer = create_context_module(in_conv, n_level_filters, dropout_rate=dropout_rate)
 
         summation_layer = Add()([in_conv, context_output_layer])
-        summation_layer = cbam_block(summation_layer, ratio = 8)
+        
+        if use_attention:
+            summation_layer = cbam_block(summation_layer, ratio=attention_ratio)
 
         level_output_layers.append(summation_layer)
         current_layer = summation_layer
