@@ -69,7 +69,7 @@ def main(overwrite=False):
                 val_w = np.linspace(0.1, 1, num_steps)
 
             loss_function = waveloss(val_w, spa_w, ValInc=config["waveloss_valinc"], SpaInc=config["waveloss_spainc"],
-                                     NumSteps=num_steps, labelwise=True)
+                                     NumSteps=num_steps, labelwise=config["waveloss_labelwise"])
 
 
         model = isensee2017_model(input_shape=config["input_shape"], n_labels=config["n_labels"],

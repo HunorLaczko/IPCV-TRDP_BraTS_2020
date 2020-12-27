@@ -2,7 +2,7 @@ import os
 import datetime
 
 config = dict()
-config["experiment_name"] = "final_waveloss_"
+config["experiment_name"] = "final_waveloss_3_no_attention_"
 config["base_folder"] = "/net/cremi/hlaczko/espaces/travail/"
 
 config["image_shape"] = (128, 128, 128)  # This determines what shape the images will be cropped/resampled to.
@@ -12,11 +12,11 @@ config["n_base_filters"] = 16
 config["n_labels"] = len(config["labels"])
 config["depth"] = 7
 config["n_segmentation_levels"] = 6
-config["dropout_rate"] = 0.2
+config["dropout_rate"] = 0.3
 config["deconvolution"] = True  # if False, will use upsampling instead of deconvolution
 config["deconvolution_last"] = True  # if False, will use upsampling instead of deconvolution
-config["use_attention"] = True
-config["attention_ratio"] = 8
+config["use_attention"] = False
+config["attention_ratio"] = 16
 
 config["all_modalities"] = ["t1", "t1ce", "t2", "flair"]
 config["training_modalities"] = config["all_modalities"]  # change this if you want to only use some of the modalities
@@ -31,7 +31,7 @@ config["batch_size"] = 1
 config["validation_batch_size"] = 1
 config["n_epochs"] = 300  # cutoff the training after this many epochs, default 500
 config["patience"] = 30  # learning rate will be reduced after this many epochs if the validation loss is not improving
-config["early_stop"] = 60  # training will be stopped after this many epochs without the validation loss improving
+config["early_stop"] = 120  # training will be stopped after this many epochs without the validation loss improving
 config["initial_learning_rate"] = 1e-4
 config["learning_rate_drop"] = 0.1  # factor by which the learning rate will be reduced
 config["validation_split"] = 0.9  # portion of the data that will be used for training
@@ -63,9 +63,10 @@ config["tensorboard_logdir"] = config["base_folder"] + "logs/" + config["experim
 config["overwrite"] = False  # If True, will previous files. If False, will use previously written files.
 
 config["waveloss_use"] = True       # Use waveloss as a loss function, otherwise use weighted dice loss
+config["waveloss_labelwise"] = False
 config["waveloss_spaw_log"] = True  # Use logarithmically increasing spatial weights for waloss, otherwise use linearly increasing
 config["waveloss_valw_log"] = True  # Use logarithmically increasing value weights for waloss, otherwise use linearly increasing
-config["waveloss_spainc"] = 8       # Spatial increase step size
+config["waveloss_spainc"] = 5       # Spatial increase step size
 config["waveloss_valinc"] = 0.1     # Value increase step size
 config["waveloss_num_steps"] = 10   # Number of iterations for one comparison
 
