@@ -2,3 +2,5 @@
 *.pyc
 
 *.code-workspace
+
+gui/.idea/
