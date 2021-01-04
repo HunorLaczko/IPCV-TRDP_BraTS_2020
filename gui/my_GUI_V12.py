@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.centralWidget)
 
         self.mainBox = QVBoxLayout()
-        self.setWindowTitle("Vizualize segmentation")
+        self.setWindowTitle("TRDP GUI : Vizualizing segmentation results")
 
         # How the main window is organized
         self.mainHorizontalBox = QHBoxLayout()
