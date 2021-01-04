@@ -4,3 +4,5 @@
 *.code-workspace
 
 gui/.idea/
+
+src/.idea/
