@@ -19,7 +19,6 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
 
         # Variables to change
-        explainationText = "This GUI allows you to vizualize segmentation results. \nTo do so : \n1. Select of folder containing BraTS20 inputs for a sample.\n2. Select your prefered options."
         number_methods = 4
 
         ######################
@@ -27,14 +26,15 @@ class MainWindow(QMainWindow):
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
 
-        self.mainBox = QHBoxLayout()
+        self.mainBox = QVBoxLayout()
         self.setWindowTitle("Vizualize segmentation")
 
         # How the main window is organized
+        self.mainHorizontalBox = QHBoxLayout()
         self.leftBox = QVBoxLayout()
         self.rightBox = QVBoxLayout()
         self.directorySelectionBox = QHBoxLayout()
-        self.explainationBox = QLabel()
+        self.explainationBox = QVBoxLayout()
         self.directorySelectionBox = QHBoxLayout()
         self.optionsAndGTViewerBox = QHBoxLayout()
         self.attentionDisplayBox = QHBoxLayout()
@@ -45,10 +45,14 @@ class MainWindow(QMainWindow):
 
         ##############################
         ###### EXPLAINATION BOX ######
-        self.explainationBox.setText(explainationText)
-
-        ###################################
-        ###### DIRECTORY SELECTION BOX ######
+        introText = "This GUI allows you to vizualize segmentation results.\n\n"
+        step1 = "To do so : \n\n1. Select a folder containing a single sample of BraTS20 inputs"
+        step2 = "2. Select vizualization options."
+        
+        self.introAndStep1Label=QLabel()
+        self.introAndStep1Label.setText(introText+step1)
+        
+        ## DIRECTORY SELECTION BOX 
 
         self.select_button = QPushButton("   Select directory   ")
         self.select_button.clicked.connect(self.getDirectory)
@@ -56,6 +60,16 @@ class MainWindow(QMainWindow):
         # print name and path of the file
         self.dir_label=QLabel()
         self.directorySelectionBox.addWidget(self.dir_label)
+
+        self.step2Label=QLabel()
+        self.step2Label.setText(step2)
+        
+
+        self.explainationBox.addWidget(self.introAndStep1Label)
+        self.explainationBox.addLayout(self.directorySelectionBox)
+        self.explainationBox.addWidget(self.step2Label)
+
+
 
         ###################################
         ###### optionsAndGTViewe BOX ######
@@ -124,15 +138,17 @@ class MainWindow(QMainWindow):
 
         # Put everything in the mainBox
 
-        self.leftBox.addWidget(self.explainationBox)
+        
         self.leftBox.addLayout(self.directorySelectionBox)
         self.leftBox.addLayout(self.optionsAndGTViewerBox)
         self.rightBox.addLayout(self.attentionDisplayBox)
         self.rightBox.addLayout(self.noAttentionDisplayBox)
 
-        self.mainBox.addLayout(self.leftBox)
-        self.mainBox.addLayout(self.rightBox)
-
+        self.mainHorizontalBox.addLayout(self.leftBox)
+        self.mainHorizontalBox.addLayout(self.rightBox)
+        
+        self.mainBox.addLayout(self.explainationBox)
+        self.mainBox.addLayout(self.mainHorizontalBox)
         self.centralWidget.setLayout(self.mainBox)
 
 
@@ -144,10 +160,9 @@ class MainWindow(QMainWindow):
             directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
             if self.is_correct_directory(directory):
                 self.dir_label.setText(directory)
-                self.dir_label.setStyleSheet('color: black')
+                self.dir_label.setStyleSheet('color: blue')
             else :
-                print("The directory does not contain the good files")
-                self.dir_label.setText("Make sure the right directory is selected ! ")
+                self.dir_label.setText("This directory does not contain relevant files ! ")
                 self.dir_label.setStyleSheet('color: red')
      
         except:
