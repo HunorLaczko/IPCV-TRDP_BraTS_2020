@@ -176,6 +176,53 @@ class MainWindow(QMainWindow):
     def outputChange(self):
         pass
 
+    def show_img(self, axis):
+
+        if axis == x :
+            slice = self.l_img_data[0,:,:]
+            count = np.count_nonzero(self.l_img_data[0,:,:]==1)
+            self.ax=0
+            for i in range(self.l_img_data.shape[0]): 
+                if np.count_nonzero(self.l_img_data[i,:,:]==1) > count:
+                    count = np.count_nonzero(self.l_img_data[i,:,:]==1)
+                    slice = self.l_img_data[i,:,:]
+                    self.ax = i
+            org_slice = self.org_img_data[self.ax,:,:]
+
+        elif axis == y :
+            slice = self.l_img_data[:,0,:]
+            count = np.count_nonzero(self.l_img_data[:,0,:]==1)
+            self.ax=0
+            for i in range(self.l_img_data.shape[1]): 
+                if np.count_nonzero(self.l_img_data[:,i,:]==1) > count:
+                    count = np.count_nonzero(self.l_img_data[:,i,:]==1)
+                    slice = self.l_img_data[:,i,:]
+                    self.ax = i
+        
+            org_slice = self.org_img_data[:,self.ax,:]
+
+        else :  
+            slice = self.l_img_data[:,:,0]
+            count = np.count_nonzero(self.l_img_data[:,:,0]==1)
+            self.ax=0
+            for i in range(self.l_img_data.shape[2]): 
+                if np.count_nonzero(self.l_img_data[:,:,i]==1) > count:
+                    count = np.count_nonzero(self.l_img_data[:,:,i]==1)
+                    slice = self.l_img_data[:,:,i]
+                    self.ax = i
+    
+            org_slice = self.org_img_data[:,:,self.ax]
+
+        show_slices([slice])
+    #     plt.suptitle("Ground truth segmentation")
+        show_slices([org_slice])
+    #     plt.suptitle("Segmentation after erosion operation")
+
+    def show_slices(slices):
+        fig, axes = plt.subplots(1, len(slices))
+        for i, slice in enumerate(slices):
+            axes[i].imshow(slice.T, cmap="gray", origin="lower")
+
 
 
 # Class that shows the image
@@ -234,6 +281,11 @@ if __name__ == '__main__':
     ex = MainWindow(app)
     ex.show()
     sys.exit(app.exec_( ))
+
+
+
+
+
 
 
 
