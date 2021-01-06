@@ -1,5 +1,4 @@
 import os
-import shutil
 
 config = dict()
 config["image_shape"] = (128, 128, 128)

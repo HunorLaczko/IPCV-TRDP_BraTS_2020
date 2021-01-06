@@ -1,19 +1,12 @@
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-import numpy as np
 import sys
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-import pydicom
-import os
-from os import path
-import argparse
-import fnmatch
-from viewerClass import Viewer
-from dataClass import NetworkOutput, GroundTruth
+
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+
 import utils
+from dataClass import NetworkOutput, GroundTruth
+from viewerClass import Viewer
 
 
 class MainWindow(QMainWindow):

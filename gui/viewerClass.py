@@ -1,17 +1,6 @@
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-import numpy as np
-import sys
 import matplotlib.pyplot as plt
+from PyQt5.QtWidgets import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-import pydicom
-import os
-from os import path
-import argparse
-import fnmatch
-import utils
 
 
 # Class that shows the image
