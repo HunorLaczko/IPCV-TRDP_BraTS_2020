@@ -1,5 +1,3 @@
-# python3 my_GUI_V9\ copy.py
-
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -27,12 +25,13 @@ class MainWindow(QMainWindow):
 
         # input path
         self.directory = ""
+        self.pred_path = "example"
 
         # model paths 
-        self.model_path_wavelossAttention = ""
-        self.model_path_waveloss = ""
-        self.model_path_baselineAttention = ""
-        self.model_path_baseline = ""
+        self.model_path_wavelossAttention = "./models/waveloss_attention.h5"
+        self.model_path_waveloss = "./models/waveloss_no_attention.h5"
+        self.model_path_baselineAttention = "./models/baseline_attention.h5"
+        self.model_path_baseline = "./models/baseline_no_attention.h5"
 
         ########################################################################################
         ####################################### MAIN BOX #######################################
@@ -65,7 +64,7 @@ class MainWindow(QMainWindow):
 
         ########################################################################################
         ################################### EXPLAINATION BOX ###################################
-        introText = "This GUI allows you to vizualize segmentation results.\n\n"
+        introText = "This GUI allows you to vizualize segmentation results with four different methods.\n\n"
         step1 = "To do so : \n\n1. Select a folder containing a single sample of BraTS20 inputs"
         step2 = "2. Select vizualization options."
         
@@ -102,7 +101,9 @@ class MainWindow(QMainWindow):
         # select label to display
         self.label_output = QLabel('   Label :  ') ### set a margin instead of spaces
         self.combobox_layer = QComboBox()
-        self.combobox_layer.addItems([" Necrotic and non-enhancing tumor core ", " Peritumoral edema ", " GD-enhancing tumor "])
+        #self.combobox_layer.addItems([" Necrotic and non-enhancing tumor core ", " Peritumoral edema ", " GD-enhancing tumor "])
+        self.combobox_layer.addItems([" ET enhanced tumor ", " WT whole tumor ", " TC tumor core "])
+        
         self.combobox_layer.setCurrentIndex(0)
         self.combobox_layer.currentIndexChanged.connect(self.updateViews)
         self.outputLabelSelectionBox.addWidget(self.label_output)
@@ -228,54 +229,56 @@ class MainWindow(QMainWindow):
 
     ########################################################################################
     #################################### TOOL FUNCTIONS ####################################
-    def is_correct_directory(self, directory):
-        # check that the files are there
-        # check that there are the exact amount of files
-        # check that the name of the files correspond to the name of the directory  (same patient)        
-        return bool(fnmatch.filter(os.listdir(directory), '*flair.nii.gz')) & bool(fnmatch.filter(os.listdir(directory), '*t1.nii.gz')) & bool(fnmatch.filter(os.listdir(directory), '*t1ce.nii.gz')) & bool(fnmatch.filter(os.listdir(directory), '*t2.nii.gz') & & bool(fnmatch.filter(os.listdir(directory), '*seg.nii.gz'))
-    
+   
     def getDirectory(self):
+        # when pushing the button to select a directory
+        # checks if the directory is valid. If so, copies it in the self.pred_path
         try:
             directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-            if self.is_correct_directory(directory):
-                self.directory = directory
+            print("[DEBUG getDirectory] Directory selected")
+            if utils.check_correct_input_directory(directory):
+                #self.directory = utils.set_up_directory(self.pred_path, directory)
+                self.directory = directory # for debug
                 self.dir_label.setText(directory)
                 self.dir_label.setStyleSheet('color: blue')
                 # get ouputs
                 self.getOuputs()
-                # view GT
-                axis = self.combobox_axis.currentIndex()
-                layer = self.combobox_layer.currentIndex()
-                axis_index = self.groundTruth.getAxisIndex(axis, layer)
-                
-                #self.GT_loaded_plot.plot(self.directory)
-                # view outputs
-                self.updateViews
+                print("[DEBUG getDirectory] Output created")
+                self.updateViews()
+                print("[DEBUG getDirectory] Views updated")
 
             else :
-                self.dir_label.setText("This directory should only contain 5 files, of form :\n'*flair.nii.gz', '*t1.nii.gz', '*t1ce.nii.gz', '*t2.nii.gz' and  '*seg.nii.gz'! ")
+                print("[DEBUG getDirectory] Wrong directory")
+                self.dir_label.setText("This directory should only contain 5 files, of form :\n'*flair.nii.gz', '*t1.nii.gz', '*t1ce.nii.gz', '*t2.nii.gz' and  '*seg.nii.gz'\nand the files should belong to the same patient ! ")
                 self.dir_label.setStyleSheet('color: red')
 
         except:
+            print("[DEBUG] Error in the process of selecting the directory")
             self.dir_label.setText("")
             #pass
     
     
     def getOuputs(self):
+        print("[DEBUG] Hello from getOutputs method")
         self.groundTruth = GroundTruth(self.directory)
-        self.wavelossAttentionOutput = NetworkOutput(self.directory, self.model_path_wavelossAttention)
-        self.wavelossOutput = NetworkOutput(self.directory, self.model_path_waveloss)
-        self.baselineAttentionOutput = NetworkOutput(self.directory, self.model_path_baselineAttention)
-        self.baselineOutput = NetworkOutput(self.directory, self.model_path_baseline)
+        self.wavelossAttentionOutput = NetworkOutput(self.pred_path, self.model_path_wavelossAttention)
+        self.wavelossOutput = NetworkOutput(self.pred_path, self.model_path_waveloss)
+        self.baselineAttentionOutput = NetworkOutput(self.pred_path, self.model_path_baselineAttention)
+        self.baselineOutput = NetworkOutput(self.pred_path, self.model_path_baseline)
     
     def updateViews(self):
-        axis = self.combobox_axis.currentIndex()
-        layer = self.combobox_layer.currentIndex()
-        axis_index = self.groundTruth.getAxisIndex(axis, layer)
-        self.wavelossAttention_loaded_plot.display(self.wavelossAttentionOutput.getSlice(layer, axis, axis_index))
-        self.baselineAttention_loaded_plot.display(self.baselineAttentionOutput.getSlice(layer, axis, axis_index))
-        self.waveloss_loaded_plot.display(self.wavelossOutput.getSlice(layer, axis, axis_index))
-        self.baseline_loaded_plot.display (self.baselineOutput.getSlice(layer, axis, axis_index))
+        print("[DEBUG] Hello from updateViews method")
+        if self.directory == "" : 
+            pass
+        else :
+            axis = self.combobox_axis.currentIndex()
+            layer = self.combobox_layer.currentIndex()
+            axis_index = self.groundTruth.getAxisIndex(axis, layer)
+            self.GT_loaded_plot.display(utils.getSlice(self.groundTruth.getGroundTruth(), layer, axis, axis_index))
+            self.wavelossAttention_loaded_plot.display(self.wavelossAttentionOutput.getSlice(layer, axis, axis_index))
+            self.baselineAttention_loaded_plot.display(self.baselineAttentionOutput.getSlice(layer, axis, axis_index))
+            self.waveloss_loaded_plot.display(self.wavelossOutput.getSlice(layer, axis, axis_index))
+            self.baseline_loaded_plot.display (self.baselineOutput.getSlice(layer, axis, axis_index))
 
 #################################### TOOL FUNCTIONS ####################################
 ########################################################################################

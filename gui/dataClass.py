@@ -19,7 +19,9 @@ class NetworkOutput:
     def __init__(self, input_path, model_path):
         self.input_path = input_path
         self.model_path = model_path
-        self.output = utils.generate_prediction(input_path, model_path)
+        #self.output = utils.generate_prediction(input_path, model_path)
+        self.output = np.zeros([3, 128, 128, 128])
+        self.output[:, 20:100, 20:100, 20:100]=1
     
     def getSlice(self, label, axis, axis_index):
         if axis == 0 :
@@ -39,16 +41,17 @@ class GroundTruth:
         self.fullGroundTruth = utils.get_ground_truth(input_path)
         self.axisIndex = -1
         self.axis = -1
-        self.label = -1
+    
+    def getGroundTruth(self) :
+        return self.fullGroundTruth
 
     def getAxisIndex(self, axis, label):
-        if self.axisIndex == -1 or axis != self.axis or label != self.label:
+        if self.axisIndex == -1 or axis != self.axis :
             self.axisIndex = self.determineAxisIndex(axis, label)
         return self.axisIndex
     
     def determineAxisIndex(self, axis, label):
         self.axis = axis
-        self.label = label
         if axis == 0 : # x
             slice = self.fullGroundTruth[label,0,:,:]
             count = np.count_nonzero(self.fullGroundTruth[label,0,:,:]==1)

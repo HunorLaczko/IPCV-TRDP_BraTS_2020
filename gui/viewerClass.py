@@ -11,6 +11,7 @@ import os
 from os import path
 import argparse
 import fnmatch
+import utils
 
 
 # Class that shows the image
@@ -35,6 +36,7 @@ class Viewer(QGraphicsView):
         self.setLayout(layout)
 
         self.axes=self.figure.add_subplot(111)
+        self.axes.axis('off')
 
     def display(self, slice):
         print("[DEBUG] Hello from Viewer.plot method")
@@ -42,5 +44,3 @@ class Viewer(QGraphicsView):
         self.axes.axis('off')
         self.canvas.draw()
         self.canvas.show()  
-         
-      

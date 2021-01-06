@@ -1,5 +1,3 @@
-# python3 my_GUI_V9\ copy.py
-
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -27,6 +25,7 @@ class MainWindow(QMainWindow):
 
         # input path
         self.directory = ""
+
 
         # model paths 
         self.model_path_wavelossAttention = "./models/waveloss_attention.h5"
@@ -103,6 +102,8 @@ class MainWindow(QMainWindow):
         self.label_output = QLabel('   Label :  ') ### set a margin instead of spaces
         self.combobox_layer = QComboBox()
         self.combobox_layer.addItems([" Necrotic and non-enhancing tumor core ", " Peritumoral edema ", " GD-enhancing tumor "])
+        
+        
         self.combobox_layer.setCurrentIndex(0)
         self.combobox_layer.currentIndexChanged.connect(self.updateViews)
         self.outputLabelSelectionBox.addWidget(self.label_output)

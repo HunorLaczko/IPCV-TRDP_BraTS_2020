@@ -49,22 +49,21 @@ def generate_prediction(input_path, model_path):
 
     return output
 
-def getSlice(output, label_index, axis, axis_index):
+def getSlice(output, layer, axis, axis_index):
+    print("[DEBUG] getSlice for Ground Truth")
     try :
         if axis == 0 :
-            slice = output[label_index, axis_index, :, :]
+            slice = output[layer, axis_index, :, :]
         elif axis == 1 :
-            slice = output[label_index, :, axis_index, :]
+            slice = output[layer, :, axis_index, :]
         else :
-            slice = output[label_index, :, :, axis_index]
+            slice = output[layer, :, :, axis_index]
             
         return slice
 
     except : 
         print("Cannot get slice because : ")
-        if label_index>output.shape[0]:
-            print("label_index out of bound")
-        if len(output.shape) != 4:
+        if len(output.shape) != 3:
             print("wrong output size")
         if axis<0 or axis>3:
             print("axis out of bound")
@@ -73,7 +72,10 @@ def getSlice(output, label_index, axis, axis_index):
 
 def get_ground_truth(input_path):
     file=fnmatch.filter(os.listdir(input_path), '*seg.nii.gz')
-    gt = read_image(input_path + "/" + file[0], config["image_shape"]).get_fdata()
+    seg = read_image(input_path + "/" + file[0], config["image_shape"]).get_fdata()
+    gt = np.zeros((3,) + config["image_shape"])
+    for i in range(3):
+        gt[i,:,:,:] = (seg == config["labels"][i]).astype(dtype="uint8")
     return gt
 
 
@@ -100,6 +102,36 @@ def download_models():
                 print("Failed to download model file!")
 
             shutil.move(models[i] + ".h5", "./models/" + models[i] + ".h5")
+
+
+def set_up_directory(safe_for_input_dir, input_dir):
+    files_to_remove = os.listdir(safe_for_input_dir)
+    if len(files_to_remove) != 0 :
+        for i in range (len(files_to_remove)):
+            shutil.rmtree(os.path.join(safe_for_input_dir, files_to_remove[i]), ignore_errors=True)
+    dir = shutil.copytree(input_dir, safe_for_input_dir)
+    return dir
+
+def check_correct_input_directory(input_directory_path):
+    print("[ DEBUG ] utils.check_correct_input_directory ")
+    contains_correct_files = bool(fnmatch.filter(os.listdir(input_directory_path), '*flair.nii.gz')) & bool(fnmatch.filter(os.listdir(input_directory_path), '*t1.nii.gz')) & bool(fnmatch.filter(os.listdir(input_directory_path), '*t1ce.nii.gz')) & bool(fnmatch.filter(os.listdir(input_directory_path), '*t2.nii.gz')) & bool(fnmatch.filter(os.listdir(input_directory_path), '*seg.nii.gz'))
+    if not contains_correct_files :
+        return False
+    patient_number = -1
+    try :
+        patient_number = input_directory_path.split("/")[-1].split("_")[2]
+    except : 
+        return False
+    list_files = sorted(os.listdir(input_directory_path))
+    nb_files = len(list_files)
+    if nb_files != 5 :
+        print("there should be 5 files")
+        return False
+    for i in range (nb_files) :
+        if list_files[i].split("_")[2] != patient_number : 
+            print ("The files do not belong to the same patient ! ")
+            return False
+    return True
 
 
 #result = generate_prediction("/home/lachu/workspace/gui/IPCV-TRDP_BraTS_2020/gui/example", "/home/lachu/workspace/model/isensee_2017_model_final_baseline_2_attention__20201228-124617.h5")
