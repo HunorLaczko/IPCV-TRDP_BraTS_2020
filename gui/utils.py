@@ -29,6 +29,14 @@ def clean_up():
         print("Unknown error!")
 
 
+def separate_labels(input):
+    output = np.zeros((3,) + config["image_shape"])
+    for i in range(3):
+        output[i, :, :, :] = (input == config["labels"][i]).astype(dtype="uint8")
+
+    return output
+
+
 def generate_prediction(input_path, model_path):
     create_util_folders()
 
@@ -38,10 +46,8 @@ def generate_prediction(input_path, model_path):
     inference.main(config)
 
     output_file = os.listdir("output")[0]
-    segmentation = read_image(os.path.join("output", output_file), config["image_shape"]).get_data()
-    output = np.zeros((3,) + config["image_shape"])
-    for i in range(3):
-        output[i,:,:,:] = (segmentation == config["labels"][i]).astype(dtype="uint8")
+    segmentation = read_image(os.path.join("output", output_file), config["image_shape"]).get_fdata()
+    output = separate_labels(segmentation)
 
     clean_up()
 
@@ -73,10 +79,7 @@ def getSlice(output, layer, axis, axis_index):
 def get_ground_truth(input_path):
     file=fnmatch.filter(os.listdir(input_path), '*seg.nii.gz')
     seg = read_image(input_path + "/" + file[0], config["image_shape"]).get_fdata()
-    gt = np.zeros((3,) + config["image_shape"])
-    for i in range(3):
-        gt[i,:,:,:] = (seg == config["labels"][i]).astype(dtype="uint8")
-    return gt
+    return separate_labels(seg)
 
 
 def download_models():
