@@ -85,9 +85,9 @@ def get_ground_truth(input_path):
 def download_models():
     models = ["baseline_attention", "baseline_no_attention", "waveloss_attention", "waveloss_no_attention"]
     model_urls = ["https://mega.nz/file/dZISgBxR#LBE8Hx6pORveE5E32556l2Rip1Z_aetmW139UoI4heA",
-                  "",
-                  "",
-                  ""]
+                  "https://mega.nz/file/ZFxwWRCY#nO-s8AoQtMbzPa0dG_imaxt-EjYswSdyshTLr8T8jMI",
+                  "https://mega.nz/file/0FgAxDLS#kZK-44VOl4_wssH7XcjaikMfFlye-4X5dr8PM5kGVZ8",
+                  "https://mega.nz/file/pB4SzRiQ#In6Vh3B5MhRWm5RUMWzB04STpnrXMXfWEqPz_7ytZgA"]
 
     m = mega.Mega()
 
