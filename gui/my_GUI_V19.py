@@ -29,10 +29,10 @@ class MainWindow(QMainWindow):
         self.directory = ""
 
         # model paths 
-        self.model_path_wavelossAttention = "./model_weights/isensee_2017_model_final_waveloss_4_attention__20201227.h5"
-        self.model_path_waveloss = "./model_weights/isensee_2017_model_final_waveloss_5_no_attention__20201228.h5"
-        self.model_path_baselineAttention = "./model_weights/baseline_attention.h5"
-        self.model_path_baseline = "./model_weights/baseline_no_attention.h5"
+        self.model_path_wavelossAttention = "./models/waveloss_attention.h5"
+        self.model_path_waveloss = "./models/waveloss_no_attention.h5"
+        self.model_path_baselineAttention = "./models/baseline_attention.h5"
+        self.model_path_baseline = "./models/baseline_no_attention.h5"
 
         ########################################################################################
         ####################################### MAIN BOX #######################################

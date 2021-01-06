@@ -2,6 +2,7 @@ import sys
 import os
 import fnmatch
 import shutil
+import mega
 import numpy as np
 sys.path.append(os.path.abspath('../src'))
 import inference
@@ -76,7 +77,32 @@ def get_ground_truth(input_path):
     return gt
 
 
+def download_models():
+    models = ["baseline_attention", "baseline_no_attention", "waveloss_attention", "waveloss_no_attention"]
+    model_urls = ["https://mega.nz/file/dZISgBxR#LBE8Hx6pORveE5E32556l2Rip1Z_aetmW139UoI4heA",
+                  "",
+                  "",
+                  ""]
+
+    m = mega.Mega()
+
+    if not os.path.exists("./models"):
+        os.mkdir("model_weights")
+
+    for i in range(4):
+        if not os.path.exists("./models/" + models[i] + ".h5"):
+            try:
+                m.download_url(model_urls[i])
+            except:
+                pass
+
+            if not os.path.exists(models[i] + ".h5"):
+                print("Failed to download model file!")
+
+            shutil.move(models[i] + ".h5", "./models/" + models[i] + ".h5")
+
+
 #result = generate_prediction("/home/lachu/workspace/gui/IPCV-TRDP_BraTS_2020/gui/example", "/home/lachu/workspace/model/isensee_2017_model_final_baseline_2_attention__20201228-124617.h5")
 #result = generate_prediction("/Users/anne-claire/Documents/github/IPCV-TRDP_BraTS_2020/gui/example", "./model_weights/baseline_no_attention.h5")
 
-get_ground_truth("/Users/anne-claire/Documents/github/IPCV-TRDP_BraTS_2020/gui/example/BraTS20_Training_001")
+#get_ground_truth("/Users/anne-claire/Documents/github/IPCV-TRDP_BraTS_2020/gui/example/BraTS20_Training_001")
