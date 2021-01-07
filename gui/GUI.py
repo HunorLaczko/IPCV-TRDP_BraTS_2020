@@ -56,14 +56,14 @@ class MainWindow(QMainWindow):
 
         ########################################################################################
         ############################# EXPLAINATIONAND OPTIONS BOX ##############################
-        introText = "This GUI allows you to visualize segmentation results with four different methods.\n"
+        introText = "This GUI allows for visualizing segmentation results with four different methods.\n"
         step1 = "1. Select a patient folder"
         step2 = "2. Select visualization options."
         
 
         self.introLabel=QLabel()
         self.introLabel.setText(introText)
-        self.introLabel.setAlignment(Qt.AlignLeft)
+        self.introLabel.setAlignment(Qt.AlignCenter)
 
         self.step1Label=QLabel()
         self.step1Label.setText(step1)
@@ -179,6 +179,7 @@ class MainWindow(QMainWindow):
         # Viewer
         self.wavelossAttention_loaded_plot = Viewer(self)
         self.wavelossAttentionLayout.addWidget(self.wavelossAttention_loaded_plot)
+        #self.wavelossAttentionLayout.addSpacing(5)
         # dice label
         self.wavelossAttentionDICELabel = QLabel("")
         self.wavelossAttentionDICELabel.setAlignment(Qt.AlignCenter)
@@ -255,7 +256,7 @@ class MainWindow(QMainWindow):
         self.centralWidget.setLayout(self.mainBox)
 
         # disable resizing
-        self.setFixedSize(QSize(850, 770))
+        self.setFixedSize(QSize(900, 900))
     
     ######################################### INIT #########################################
     ########################################################################################

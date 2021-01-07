@@ -28,8 +28,9 @@ class Viewer(QGraphicsView):
 
         # create layout
         layout = QHBoxLayout()
+        layout.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.frame)
-        layout.addSpacing(5)
+        #layout.addSpacing(5)
         self.setLayout(layout)
 
     # display given image, applies transformation from binary to uint8 and resize for the view size
