@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QImage, QPixmap
 
-VIEWER_SIZE = (250, 250)
+VIEWER_SIZE = (275, 250)
 
 
 # Class that shows the image
