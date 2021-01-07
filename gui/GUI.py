@@ -1,11 +1,12 @@
 import sys
+import os
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 import utils
-from dataClass import NetworkOutput, GroundTruth
+from dataClass import Data
 from viewerClass import Viewer
 
 
@@ -17,7 +18,12 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
 
         # input path
-        self.directory = "./patient_results/"
+        self.directory = "examples"
+        self.result_directory = "result"
+        self.truth_directory = "truth"
+        self.prefix = "BraTS20_Training_"
+        self.result_end = ".nii.gz"
+        self.gt_end = "_seg.nii.gz"
 
         ########################################################################################
         ####################################### MAIN BOX #######################################
@@ -51,7 +57,7 @@ class MainWindow(QMainWindow):
         ########################################################################################
         ############################# EXPLAINATIONAND OPTIONS BOX ##############################
         introText = "This GUI allows you to vizualize segmentation results with four different methods.\n"
-        step1 = "To do so : \n\n1. Select a patient folder"
+        step1 = "1. Select a patient folder"
         step2 = "2. Select vizualization options."
         
 
@@ -66,8 +72,8 @@ class MainWindow(QMainWindow):
         ## DIRECTORY SELECTION BOX 
 
         self.combobox_patient = QComboBox()
-        self.combobox_patient.addItems(["   Select a patient   ", "", "", "", ""])
-        self.patient_index = 0
+        self.combobox_patient.addItems(["   Select a patient   ", "001", "002", "003", "004", "005", "006", "007", "008", "009", "010", "011", "012", "013", "014", "015"])
+        self.patient_index = -1
         self.combobox_patient.setCurrentIndex(0) # if zero, then nothing
         self.combobox_patient.currentIndexChanged.connect(self.updatePatient)
         self.directorySelectionBox.addWidget(self.combobox_patient)
@@ -108,6 +114,9 @@ class MainWindow(QMainWindow):
         self.axisSelectionBox.addWidget(self.combobox_axis)
 
         # Select Slice
+
+        self.label_cursor = QLabel('   Slice :  ')
+
         self.slideCursor = QSlider(Qt.Horizontal)
 
         self.slideCursor.setMinimum(0)
@@ -116,17 +125,17 @@ class MainWindow(QMainWindow):
         self.slideCursor.setTickInterval(10)
         self.slideCursor.setTickPosition(QSlider.TicksBelow)
 
-        self.slideCursor.setValue(100)
+        self.slideCursor.setValue(65)
 
         self.slice_index = self.slideCursor.value()
-        self.slideCursorLabel = QLabel(str(self.slice_index))
-    
-        self.slideCursor.sliderPressed()
-        #sliderReleased()
+        self.sliceCursorLabel = QLabel(str(self.slice_index))
 
+        self.slideCursor.valueChanged.connect(self.updateSliceIndex)
 
+        self.sliceSelectionBox.addWidget(self.label_cursor)
         self.sliceSelectionBox.addWidget(self.slideCursor)
-        self.sliceSelectionBox.addWidget(self.slideCursorLabel)
+        self.sliceSelectionBox.addWidget(self.sliceCursorLabel)
+        
 
 
         # put it together in the optionSelectionBox
@@ -246,40 +255,61 @@ class MainWindow(QMainWindow):
 
     ########################################################################################
     #################################### TOOL FUNCTIONS ####################################
-    
-    def updatePatient(self): ## TODO : change this
-        print("[DEBUG] Hello from updatePatient method")
-        if self.patient_index == self.combobox_patient.currentIndex() :
-            pass
-        else : 
-            self.patient_index = self.combobox_patient.currentIndex()
-            if self.patient_index != 0 : 
-                self.groundTruth = GroundTruth(self.directory)
-                self.wavelossAttentionOutput = NetworkOutput(self.pred_path, self.model_path_wavelossAttention)
-                self.wavelossOutput = NetworkOutput(self.pred_path, self.model_path_waveloss)
-                self.baselineAttentionOutput = NetworkOutput(self.pred_path, self.model_path_baselineAttention)
-                self.baselineOutput = NetworkOutput(self.pred_path, self.model_path_baseline)
 
-            self.updateViews
-        
-    
-    def updateViews(self): ## TODO : change this ?? 
-        print("[DEBUG] Hello from updateViews method")
-        if self.patient_index == 0 : # If no patient is selected
-            self.GT_loaded_plot.clearCanvas()
-            self.wavelossAttention_loaded_plot.clearCanvas()
-            self.baselineAttention_loaded_plot.clearCanvas()
-            self.waveloss_loaded_plot.clearCanvas()
-            self.baseline_loaded_plot.clearCanvas()
+    def clearViews(self) : 
+        #print("[DEBUG] clearViews")
+        self.GT_loaded_plot.clearCanvas()
+        self.wavelossAttention_loaded_plot.clearCanvas()
+        self.baselineAttention_loaded_plot.clearCanvas()
+        self.waveloss_loaded_plot.clearCanvas()
+        self.baseline_loaded_plot.clearCanvas()
+
+    def updateViews(self) :
+        #print("[DEBUG] updateViews")
+        if self.patient_index == -1 : # If no patient is selected
+            pass
         else :
             axis = self.combobox_axis.currentIndex()
             layer = self.combobox_layer.currentIndex()
-            axis_index = self.groundTruth.getAxisIndex(axis, layer)
-            self.GT_loaded_plot.display(utils.getSlice(self.groundTruth.getGroundTruth(), layer, axis, axis_index))
-            self.wavelossAttention_loaded_plot.display(self.wavelossAttentionOutput.getSlice(layer, axis, axis_index))
-            self.baselineAttention_loaded_plot.display(self.baselineAttentionOutput.getSlice(layer, axis, axis_index))
-            self.waveloss_loaded_plot.display(self.wavelossOutput.getSlice(layer, axis, axis_index))
-            self.baseline_loaded_plot.display (self.baselineOutput.getSlice(layer, axis, axis_index))
+            slice_index = self.slideCursor.value()
+            
+            self.GT_loaded_plot.display(self.groundTruth.getSlice(layer, axis, slice_index))
+            self.wavelossAttention_loaded_plot.display(self.wavelossAttentionOutput.getSlice(layer, axis, slice_index))
+            self.baselineAttention_loaded_plot.display(self.baselineAttentionOutput.getSlice(layer, axis, slice_index))
+            self.waveloss_loaded_plot.display(self.wavelossOutput.getSlice(layer, axis, slice_index))
+            self.baseline_loaded_plot.display (self.baselineOutput.getSlice(layer, axis, slice_index))
+    
+    def updatePatient(self):
+        #print("[DEBUG] updatePatient")
+        if self.patient_index + 1 == self.combobox_patient.currentIndex() :
+            pass
+        else : 
+            self.patient_index = self.combobox_patient.currentIndex() -1
+            print (self.patient_index)
+            if self.patient_index == -1 : 
+                self.clearViews()
+            else :
+                self.groundTruth = Data(os.path.join(self.directory, self.truth_directory, self.prefix + self.combobox_patient.currentText() + self.gt_end))
+                self.wavelossAttentionOutput = Data(os.path.join(self.directory, self.result_directory, "waveloss_attention", self.prefix + self.combobox_patient.currentText() + self.result_end))
+                self.wavelossOutput = Data(os.path.join(self.directory, self.result_directory, "waveloss_no_attention", self.prefix + self.combobox_patient.currentText() + self.result_end))
+                self.baselineAttentionOutput = Data(os.path.join(self.directory, self.result_directory, "baseline_attention", self.prefix + self.combobox_patient.currentText() + self.result_end))
+                self.baselineOutput = Data(os.path.join(self.directory, self.result_directory, "baseline_no_attention", self.prefix + self.combobox_patient.currentText() + self.result_end))
+                #print("[DEBUG] patient data updated!")
+                self.updateViews()
+                #print("[DEBUG] patient data updated and views!")
+      
+        
+    
+    def updateSliceIndex(self) : 
+        #print("[DEBUG] updateSliceIndex")
+        self.slice_index = self.slideCursor.value()
+        self.sliceCursorLabel.setText(str(self.slice_index))
+        self.updateViews()
+
+    
+
+    
+    
 
 #################################### TOOL FUNCTIONS ####################################
 ########################################################################################
