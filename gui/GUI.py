@@ -177,9 +177,9 @@ class MainWindow(QMainWindow):
 
         # Show the result for each method
 
-        ### With Attention : inside attentionDisplayBox
+        ##### With Attention : inside attentionDisplayBox
 
-        ## Waveloss with attention
+        ### Waveloss with attention
         self.wavelossAttentionLayout = QVBoxLayout()
         self.wavelossAttentionLayout.setAlignment(Qt.AlignTop)
         # label
@@ -189,9 +189,14 @@ class MainWindow(QMainWindow):
         # Viewer
         self.wavelossAttention_loaded_plot = Viewer(self)
         self.wavelossAttentionLayout.addWidget(self.wavelossAttention_loaded_plot)
+        # dice label
+        self.wavelossAttentionDICELabel=QLabel("")
+        self.wavelossAttentionDICELabel.setAlignment(Qt.AlignCenter)
+        self.wavelossAttentionLayout.addWidget(self.wavelossAttentionDICELabel)
         self.attentionDisplayBox.addLayout(self.wavelossAttentionLayout)
+        
 
-        ## Baseline with attention
+        ### Baseline with attention
         self.baselineAttentionLayout = QVBoxLayout()
         self.baselineAttentionLayout.setAlignment(Qt.AlignTop)
         # label
@@ -201,11 +206,16 @@ class MainWindow(QMainWindow):
         # Viewer
         self.baselineAttention_loaded_plot = Viewer(self)
         self.baselineAttentionLayout.addWidget(self.baselineAttention_loaded_plot)
+        # dice label
+        self.wavelossDICELabel=QLabel("")
+        self.wavelossDICELabel.setAlignment(Qt.AlignCenter)
+        self.baselineAttentionLayout.addWidget(self.wavelossDICELabel)
         self.attentionDisplayBox.addLayout(self.baselineAttentionLayout)
+        
 
-        ### Without Attention : inside noAttentionDisplayBox
+        ##### Without Attention : inside noAttentionDisplayBox
 
-        ## Waveloss
+        ### Waveloss
         self.wavelossLayout = QVBoxLayout()
         self.wavelossLayout.setAlignment(Qt.AlignTop)
         # label
@@ -215,9 +225,14 @@ class MainWindow(QMainWindow):
         # Viewer
         self.waveloss_loaded_plot = Viewer(self)
         self.wavelossLayout.addWidget(self.waveloss_loaded_plot)
+        # dice label
+        self.baselineAttentionDICELabel=QLabel("")  
+        self.baselineAttentionDICELabel.setAlignment(Qt.AlignCenter)
+        self.wavelossLayout.addWidget(self.baselineAttentionDICELabel)  
         self.noAttentionDisplayBox.addLayout(self.wavelossLayout)
+        
 
-        ## Baseline
+        ### Baseline
         self.baselineLayout = QVBoxLayout()
         self.baselineLayout.setAlignment(Qt.AlignTop)
         # label
@@ -227,7 +242,13 @@ class MainWindow(QMainWindow):
         # Viewer
         self.baseline_loaded_plot = Viewer(self)
         self.baselineLayout.addWidget(self.baseline_loaded_plot)
+        # dice label
+        self.baselineDICELabel=QLabel("") 
+        self.baselineDICELabel.setAlignment(Qt.AlignCenter)
+        self.baselineLayout.addWidget(self.baselineDICELabel)
         self.noAttentionDisplayBox.addLayout(self.baselineLayout)
+        
+         
 
         
         ################################## RESULT DISPLAY BOX ##################################
@@ -264,6 +285,11 @@ class MainWindow(QMainWindow):
         self.waveloss_loaded_plot.clearCanvas()
         self.baseline_loaded_plot.clearCanvas()
 
+        self.wavelossAttentionDICELabel.setText("")
+        self.wavelossDICELabel.setText("")
+        self.baselineAttentionDICELabel.setText("")
+        self.baselineDICELabel.setText("")
+
     def updateViews(self) :
         #print("[DEBUG] updateViews")
         if self.patient_index == -1 : # If no patient is selected
@@ -294,9 +320,13 @@ class MainWindow(QMainWindow):
                 self.wavelossOutput = Data(os.path.join(self.directory, self.result_directory, "waveloss_no_attention", self.prefix + self.combobox_patient.currentText() + self.result_end))
                 self.baselineAttentionOutput = Data(os.path.join(self.directory, self.result_directory, "baseline_attention", self.prefix + self.combobox_patient.currentText() + self.result_end))
                 self.baselineOutput = Data(os.path.join(self.directory, self.result_directory, "baseline_no_attention", self.prefix + self.combobox_patient.currentText() + self.result_end))
-                #print("[DEBUG] patient data updated!")
+                # compute Dice 
+                y_true = self.groundTruth.getArray()
+                self.wavelossAttentionDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.wavelossAttentionOutput.getArray())))
+                self.wavelossDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.wavelossOutput.getArray())))
+                self.baselineAttentionDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.baselineAttentionOutput.getArray())))
+                self.baselineDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.baselineOutput.getArray())))
                 self.updateViews()
-                #print("[DEBUG] patient data updated and views!")
       
         
     
