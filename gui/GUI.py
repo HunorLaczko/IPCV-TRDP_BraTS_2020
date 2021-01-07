@@ -20,6 +20,9 @@ class MainWindow(QMainWindow):
         self.directory = ""
         self.pred_path = "example"
 
+        #utils.download_models()
+
+
         # model paths 
         self.model_path_wavelossAttention = "./models/waveloss_attention.h5"
         self.model_path_waveloss = "./models/waveloss_no_attention.h5"
@@ -245,8 +248,14 @@ class MainWindow(QMainWindow):
                 self.dir_label.setText("This directory should only contain 5 files, of form :\n'*flair.nii.gz', '*t1.nii.gz', '*t1ce.nii.gz', '*t2.nii.gz' and  '*seg.nii.gz'\nand the files should belong to the same patient ! ")
                 self.dir_label.setStyleSheet('color: red')
 
+                self.GT_loaded_plot.clearCanvas()
+                self.wavelossAttention_loaded_plot.clearCanvas()
+                self.baselineAttention_loaded_plot.clearCanvas()
+                self.waveloss_loaded_plot.clearCanvas()
+                self.baseline_loaded_plot.clearCanvas()
+
         except:
-            print("[DEBUG] Error in the process of selecting the directory")
+            print("[DEBUG] Error in the process of selecting the directory or EXIT")
             self.dir_label.setText("")
             #pass
     

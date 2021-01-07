@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 
+
 # Class that shows the image
 class Viewer(QGraphicsView):
     def __init__(self, parent=None):
@@ -27,9 +28,12 @@ class Viewer(QGraphicsView):
         self.axes=self.figure.add_subplot(111)
         self.axes.axis('off')
 
-    def display(self, slice):
+    def display(self, slice) :
         print("[DEBUG] Hello from Viewer.plot method")
         self.axes.imshow(slice.T, cmap="gray", origin="lower")
         self.axes.axis('off')
         self.canvas.draw()
         self.canvas.show()  
+    
+    def clearCanvas(self) : 
+        self.canvas.close()  
