@@ -29,7 +29,7 @@ class Viewer(QGraphicsView):
         self.axes.axis('off')
 
     def display(self, slice) :
-        print("[DEBUG] Hello from Viewer.plot method")
+        print("[DEBUG] Viewer.display")
         self.axes.imshow(slice.T, cmap="gray", origin="lower")
         self.axes.axis('off')
         self.canvas.draw()

@@ -7,12 +7,10 @@ import utils
 
 #### NetworkOutput Class
 class NetworkOutput:
-    def __init__(self, input_path, model_path):
+    def __init__(self, input_path):
         self.input_path = input_path
-        self.model_path = model_path
-        self.output = utils.generate_prediction(input_path, model_path)
-        #self.output = np.zeros([3, 128, 128, 128])
-        #self.output[:, 20:100, 20:100, 20:100]=1
+        self.output = np.zeros([3, 128, 128, 128])
+        self.output[:, 20:100, 20:100, 20:100]=1
     
     def getSlice(self, label, axis, axis_index):
         if axis == 0 :

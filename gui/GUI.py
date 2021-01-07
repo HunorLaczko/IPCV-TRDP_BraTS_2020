@@ -17,17 +17,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
 
         # input path
-        self.directory = ""
-        self.pred_path = "example"
-
-        #utils.download_models()
-
-
-        # model paths 
-        self.model_path_wavelossAttention = "./models/waveloss_attention.h5"
-        self.model_path_waveloss = "./models/waveloss_no_attention.h5"
-        self.model_path_baselineAttention = "./models/baseline_attention.h5"
-        self.model_path_baseline = "./models/baseline_no_attention.h5"
+        self.directory = "./patient_results/"
 
         ########################################################################################
         ####################################### MAIN BOX #######################################
@@ -59,9 +49,9 @@ class MainWindow(QMainWindow):
         
 
         ########################################################################################
-        ################################### EXPLAINATION BOX ###################################
-        introText = "This GUI allows you to vizualize segmentation results with four different methods.\n\n"
-        step1 = "To do so : \n\n1. Select a folder containing a single sample of BraTS20 inputs"
+        ############################# EXPLAINATIONAND OPTIONS BOX ##############################
+        introText = "This GUI allows you to vizualize segmentation results with four different methods.\n"
+        step1 = "To do so : \n\n1. Select a patient folder"
         step2 = "2. Select vizualization options."
         
 
@@ -71,28 +61,31 @@ class MainWindow(QMainWindow):
 
         self.step1Label=QLabel()
         self.step1Label.setText(step1)
-        
+
+
         ## DIRECTORY SELECTION BOX 
 
-        self.select_button = QPushButton("   Select directory   ")
-        self.select_button.clicked.connect(self.getDirectory)
-        self.directorySelectionBox.addWidget(self.select_button)
-        # print name and path of the file
-        self.dir_label=QLabel()
-        self.directorySelectionBox.addWidget(self.dir_label)
+        self.combobox_patient = QComboBox()
+        self.combobox_patient.addItems(["   Select a patient   ", "", "", "", ""])
+        self.patient_index = 0
+        self.combobox_patient.setCurrentIndex(0) # if zero, then nothing
+        self.combobox_patient.currentIndexChanged.connect(self.updatePatient)
+        self.directorySelectionBox.addWidget(self.combobox_patient)
+
+        ## OPTIONS ##
 
         self.step2Label=QLabel()
         self.step2Label.setText(step2)
 
 
-        ## OPTIONS ##
         self.optionSelectionBox = QHBoxLayout()
         self.optionSelectionBox.setAlignment(Qt.AlignLeft)
-        self.outputLabelSelectionBox = QHBoxLayout()
-        axisSelectionBox = QHBoxLayout()
+        self.labelSelectionBox = QHBoxLayout()
+        self.axisSelectionBox = QHBoxLayout()
+        self.sliceSelectionBox = QHBoxLayout()
         # Alignment 
-        self.outputLabelSelectionBox.setAlignment(Qt.AlignLeft)
-        axisSelectionBox.setAlignment(Qt.AlignLeft)
+        self.labelSelectionBox.setAlignment(Qt.AlignLeft)
+        self.axisSelectionBox.setAlignment(Qt.AlignLeft)
 
         # select label to display
         self.label_output = QLabel('   Label :  ') ### set a margin instead of spaces
@@ -102,8 +95,8 @@ class MainWindow(QMainWindow):
         
         self.combobox_layer.setCurrentIndex(0)
         self.combobox_layer.currentIndexChanged.connect(self.updateViews)
-        self.outputLabelSelectionBox.addWidget(self.label_output)
-        self.outputLabelSelectionBox.addWidget(self.combobox_layer)
+        self.labelSelectionBox.addWidget(self.label_output)
+        self.labelSelectionBox.addWidget(self.combobox_layer)
 
         # Select axis to display
         self.label_axis = QLabel('   Axis :  ') ### set a margin instead of spaces
@@ -111,24 +104,47 @@ class MainWindow(QMainWindow):
         self.combobox_axis.addItems(["   x   ", "   y   ", "   z   "])
         self.combobox_axis.setCurrentIndex(0)
         self.combobox_axis.currentIndexChanged.connect(self.updateViews)
-        axisSelectionBox.addWidget(self.label_axis)
-        axisSelectionBox.addWidget(self.combobox_axis)
+        self.axisSelectionBox.addWidget(self.label_axis)
+        self.axisSelectionBox.addWidget(self.combobox_axis)
+
+        # Select Slice
+        self.slideCursor = QSlider(Qt.Horizontal)
+
+        self.slideCursor.setMinimum(0)
+        self.slideCursor.setMaximum(127)
+        self.slideCursor.setSingleStep(1)
+        self.slideCursor.setTickInterval(10)
+        self.slideCursor.setTickPosition(QSlider.TicksBelow)
+
+        self.slideCursor.setValue(100)
+
+        self.slice_index = self.slideCursor.value()
+        self.slideCursorLabel = QLabel(str(self.slice_index))
+    
+        self.slideCursor.sliderPressed()
+        #sliderReleased()
+
+
+        self.sliceSelectionBox.addWidget(self.slideCursor)
+        self.sliceSelectionBox.addWidget(self.slideCursorLabel)
+
 
         # put it together in the optionSelectionBox
         
-        self.optionSelectionBox.addWidget(self.step2Label)
-        self.optionSelectionBox.addLayout(self.outputLabelSelectionBox)
-        self.optionSelectionBox.addLayout(axisSelectionBox)
+        self.optionSelectionBox.addLayout(self.labelSelectionBox)
+        self.optionSelectionBox.addLayout(self.axisSelectionBox)
+        self.optionSelectionBox.addLayout(self.sliceSelectionBox)
 
         # put it together in the explainationBox
 
         self.explainationBox.addWidget(self.introLabel)
         self.explainationBox.addWidget(self.step1Label)
         self.explainationBox.addLayout(self.directorySelectionBox)
+        self.explainationBox.addWidget(self.step2Label)
         self.explainationBox.addLayout(self.optionSelectionBox)
 
 
-        ################################### EXPLAINATION BOX ###################################
+        ############################# EXPLAINATIONAND OPTIONS BOX ##############################
         ########################################################################################    
 
 
@@ -152,7 +168,9 @@ class MainWindow(QMainWindow):
 
         # Show the result for each method
 
-        # With Attention : inside attentionDisplayBox
+        ### With Attention : inside attentionDisplayBox
+
+        ## Waveloss with attention
         self.wavelossAttentionLayout = QVBoxLayout()
         self.wavelossAttentionLayout.setAlignment(Qt.AlignTop)
         # label
@@ -164,10 +182,11 @@ class MainWindow(QMainWindow):
         self.wavelossAttentionLayout.addWidget(self.wavelossAttention_loaded_plot)
         self.attentionDisplayBox.addLayout(self.wavelossAttentionLayout)
 
+        ## Baseline with attention
         self.baselineAttentionLayout = QVBoxLayout()
         self.baselineAttentionLayout.setAlignment(Qt.AlignTop)
         # label
-        wavelossLabel=QLabel("Waveloss without Attention")
+        wavelossLabel=QLabel("Baseline with Attention")
         wavelossLabel.setAlignment(Qt.AlignCenter)
         self.baselineAttentionLayout.addWidget(wavelossLabel)
         # Viewer
@@ -175,12 +194,13 @@ class MainWindow(QMainWindow):
         self.baselineAttentionLayout.addWidget(self.baselineAttention_loaded_plot)
         self.attentionDisplayBox.addLayout(self.baselineAttentionLayout)
 
-        # Without Attention : inside noAttentionDisplayBox
+        ### Without Attention : inside noAttentionDisplayBox
 
+        ## Waveloss
         self.wavelossLayout = QVBoxLayout()
         self.wavelossLayout.setAlignment(Qt.AlignTop)
         # label
-        baselineAttentionLabel=QLabel("Baseline with Attention")
+        baselineAttentionLabel=QLabel("Waveloss without Attention")
         baselineAttentionLabel.setAlignment(Qt.AlignCenter)
         self.wavelossLayout.addWidget(baselineAttentionLabel)
         # Viewer
@@ -188,6 +208,7 @@ class MainWindow(QMainWindow):
         self.wavelossLayout.addWidget(self.waveloss_loaded_plot)
         self.noAttentionDisplayBox.addLayout(self.wavelossLayout)
 
+        ## Baseline
         self.baselineLayout = QVBoxLayout()
         self.baselineLayout.setAlignment(Qt.AlignTop)
         # label
@@ -225,53 +246,31 @@ class MainWindow(QMainWindow):
 
     ########################################################################################
     #################################### TOOL FUNCTIONS ####################################
-   
-    def getDirectory(self):
-        # when pushing the button to select a directory
-        # checks if the directory is valid. If so, copies it in the self.pred_path
-        try:
-            directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-            print("[DEBUG getDirectory] Directory selected")
-            if utils.check_correct_input_directory(directory):
-                #self.directory = utils.set_up_directory(self.pred_path, directory)
-                self.directory = directory # for debug
-                self.dir_label.setText(directory)
-                self.dir_label.setStyleSheet('color: blue')
-                # get ouputs
-                self.getOuputs()
-                print("[DEBUG getDirectory] Output created")
-                self.updateViews()
-                print("[DEBUG getDirectory] Views updated")
-
-            else :
-                print("[DEBUG getDirectory] Wrong directory")
-                self.dir_label.setText("This directory should only contain 5 files, of form :\n'*flair.nii.gz', '*t1.nii.gz', '*t1ce.nii.gz', '*t2.nii.gz' and  '*seg.nii.gz'\nand the files should belong to the same patient ! ")
-                self.dir_label.setStyleSheet('color: red')
-
-                self.GT_loaded_plot.clearCanvas()
-                self.wavelossAttention_loaded_plot.clearCanvas()
-                self.baselineAttention_loaded_plot.clearCanvas()
-                self.waveloss_loaded_plot.clearCanvas()
-                self.baseline_loaded_plot.clearCanvas()
-
-        except:
-            print("[DEBUG] Error in the process of selecting the directory or EXIT")
-            self.dir_label.setText("")
-            #pass
     
-    
-    def getOuputs(self):
-        print("[DEBUG] Hello from getOutputs method")
-        self.groundTruth = GroundTruth(self.directory)
-        self.wavelossAttentionOutput = NetworkOutput(self.pred_path, self.model_path_wavelossAttention)
-        self.wavelossOutput = NetworkOutput(self.pred_path, self.model_path_waveloss)
-        self.baselineAttentionOutput = NetworkOutput(self.pred_path, self.model_path_baselineAttention)
-        self.baselineOutput = NetworkOutput(self.pred_path, self.model_path_baseline)
-    
-    def updateViews(self):
-        print("[DEBUG] Hello from updateViews method")
-        if self.directory == "" : 
+    def updatePatient(self): ## TODO : change this
+        print("[DEBUG] Hello from updatePatient method")
+        if self.patient_index == self.combobox_patient.currentIndex() :
             pass
+        else : 
+            self.patient_index = self.combobox_patient.currentIndex()
+            if self.patient_index != 0 : 
+                self.groundTruth = GroundTruth(self.directory)
+                self.wavelossAttentionOutput = NetworkOutput(self.pred_path, self.model_path_wavelossAttention)
+                self.wavelossOutput = NetworkOutput(self.pred_path, self.model_path_waveloss)
+                self.baselineAttentionOutput = NetworkOutput(self.pred_path, self.model_path_baselineAttention)
+                self.baselineOutput = NetworkOutput(self.pred_path, self.model_path_baseline)
+
+            self.updateViews
+        
+    
+    def updateViews(self): ## TODO : change this ?? 
+        print("[DEBUG] Hello from updateViews method")
+        if self.patient_index == 0 : # If no patient is selected
+            self.GT_loaded_plot.clearCanvas()
+            self.wavelossAttention_loaded_plot.clearCanvas()
+            self.baselineAttention_loaded_plot.clearCanvas()
+            self.waveloss_loaded_plot.clearCanvas()
+            self.baseline_loaded_plot.clearCanvas()
         else :
             axis = self.combobox_axis.currentIndex()
             layer = self.combobox_layer.currentIndex()
