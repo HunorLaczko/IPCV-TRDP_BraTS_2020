@@ -321,11 +321,11 @@ class MainWindow(QMainWindow):
                 self.baselineAttentionOutput = Data(os.path.join(self.directory, self.result_directory, "baseline_attention", self.prefix + self.combobox_patient.currentText() + self.result_end))
                 self.baselineOutput = Data(os.path.join(self.directory, self.result_directory, "baseline_no_attention", self.prefix + self.combobox_patient.currentText() + self.result_end))
                 # compute Dice 
-                y_true = self.groundTruth.getArray()
-                self.wavelossAttentionDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.wavelossAttentionOutput.getArray())))
-                self.wavelossDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.wavelossOutput.getArray())))
-                self.baselineAttentionDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.baselineAttentionOutput.getArray())))
-                self.baselineDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.baselineOutput.getArray())))
+                y_true = self.groundTruth.getData()
+                self.wavelossAttentionDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.wavelossAttentionOutput.getData())))
+                self.wavelossDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.wavelossOutput.getData())))
+                self.baselineAttentionDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.baselineAttentionOutput.getData())))
+                self.baselineDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.baselineOutput.getData())))
                 self.updateViews()
       
         
