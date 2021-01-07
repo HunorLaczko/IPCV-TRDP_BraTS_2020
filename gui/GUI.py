@@ -280,11 +280,11 @@ class MainWindow(QMainWindow):
 
     def clearViews(self) : 
         #print("[DEBUG] clearViews")
-        self.GT_loaded_plot.clearCanvas()
-        self.wavelossAttention_loaded_plot.clearCanvas()
-        self.baselineAttention_loaded_plot.clearCanvas()
-        self.waveloss_loaded_plot.clearCanvas()
-        self.baseline_loaded_plot.clearCanvas()
+        self.GT_loaded_plot.clearDisplay()
+        self.wavelossAttention_loaded_plot.clearDisplay()
+        self.baselineAttention_loaded_plot.clearDisplay()
+        self.waveloss_loaded_plot.clearDisplay()
+        self.baseline_loaded_plot.clearDisplay()
 
         self.wavelossAttentionDICELabel.setText("")
         self.wavelossDICELabel.setText("")

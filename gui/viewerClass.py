@@ -1,3 +1,4 @@
+import numpy as np
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QImage, QPixmap
@@ -33,5 +34,5 @@ class Viewer(QGraphicsView):
         pixmap = pixmap.scaledToWidth(self.width() - 25)
         self.frame.setPixmap(pixmap)
     
-    def clearCanvas(self):
-        pass
+    def clearDisplay(self):
+        self.display(np.zeros((128, 128, 128)))
