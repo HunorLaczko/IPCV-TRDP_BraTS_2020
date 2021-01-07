@@ -268,7 +268,7 @@ class MainWindow(QMainWindow):
         self.mainBox.addLayout(self.mainHorizontalBox)
         self.centralWidget.setLayout(self.mainBox)
 
-        self.setMinimumSize(QSize(850, 770))
+        self.setFixedSize(QSize(850, 770))
     
     ######################################### INIT #########################################
     ########################################################################################
