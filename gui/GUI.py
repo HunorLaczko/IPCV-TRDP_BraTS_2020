@@ -14,6 +14,7 @@ class MainWindow(QMainWindow):
 
     ########################################################################################
     ######################################### INIT #########################################
+    
     def __init__(self, parent=None):
         super(MainWindow, self).__init__()
 
@@ -31,22 +32,21 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.centralWidget)
 
         self.mainBox = QVBoxLayout()
-        self.setWindowTitle("TRDP GUI : Vizualizing segmentation results")
+        self.setWindowTitle("TRDP GUI : Visualizing segmentation results")
 
         # How the main window is organized
         self.mainHorizontalBox = QHBoxLayout()
         self.leftBox = QVBoxLayout()
         self.rightBox = QVBoxLayout()
-        self.explainationBox = QVBoxLayout()
+        self.explanationBox = QVBoxLayout()
         self.directorySelectionBox = QHBoxLayout()
         self.GTViewerBox = QVBoxLayout()
         self.attentionDisplayBox = QHBoxLayout()
         self.noAttentionDisplayBox = QHBoxLayout()
 
-        
-        # Alignement
+        # Alignment
         self.mainHorizontalBox.setAlignment(Qt.AlignTop)
-        self.explainationBox.setAlignment(Qt.AlignTop)
+        self.explanationBox.setAlignment(Qt.AlignTop)
         self.directorySelectionBox.setAlignment(Qt.AlignLeft)
         self.GTViewerBox.setAlignment(Qt.AlignTop)
 
@@ -56,9 +56,9 @@ class MainWindow(QMainWindow):
 
         ########################################################################################
         ############################# EXPLAINATIONAND OPTIONS BOX ##############################
-        introText = "This GUI allows you to vizualize segmentation results with four different methods.\n"
+        introText = "This GUI allows you to visualize segmentation results with four different methods.\n"
         step1 = "1. Select a patient folder"
-        step2 = "2. Select vizualization options."
+        step2 = "2. Select visualization options."
         
 
         self.introLabel=QLabel()
@@ -83,7 +83,6 @@ class MainWindow(QMainWindow):
         self.step2Label=QLabel()
         self.step2Label.setText(step2)
 
-
         self.optionSelectionBox = QHBoxLayout()
         self.optionSelectionBox.setAlignment(Qt.AlignLeft)
         self.labelSelectionBox = QHBoxLayout()
@@ -97,7 +96,7 @@ class MainWindow(QMainWindow):
         self.label_output = QLabel('   Label :  ') ### set a margin instead of spaces
         self.combobox_layer = QComboBox()
         #self.combobox_layer.addItems([" Necrotic and non-enhancing tumor core ", " Peritumoral edema ", " GD-enhancing tumor "])
-        self.combobox_layer.addItems([" ET enhanced tumor ", " WT whole tumor ", " TC tumor core "])
+        self.combobox_layer.addItems([" ET - enhanced tumor ", " WT - whole tumor ", " TC - tumor core "])
         
         self.combobox_layer.setCurrentIndex(0)
         self.combobox_layer.currentIndexChanged.connect(self.updateViews)
@@ -105,7 +104,7 @@ class MainWindow(QMainWindow):
         self.labelSelectionBox.addWidget(self.combobox_layer)
 
         # Select axis to display
-        self.label_axis = QLabel('   Axis :  ') ### set a margin instead of spaces
+        self.label_axis = QLabel('   Axis :  ')  # set a margin instead of spaces
         self.combobox_axis = QComboBox()
         self.combobox_axis.addItems(["   x   ", "   y   ", "   z   "])
         self.combobox_axis.setCurrentIndex(0)
@@ -114,9 +113,7 @@ class MainWindow(QMainWindow):
         self.axisSelectionBox.addWidget(self.combobox_axis)
 
         # Select Slice
-
         self.label_cursor = QLabel('   Slice :  ')
-
         self.slideCursor = QSlider(Qt.Horizontal)
 
         self.slideCursor.setMinimum(0)
@@ -126,41 +123,34 @@ class MainWindow(QMainWindow):
         self.slideCursor.setTickPosition(QSlider.TicksBelow)
 
         self.slideCursor.setValue(65)
-
-        self.slice_index = self.slideCursor.value()
-        self.sliceCursorLabel = QLabel(str(self.slice_index))
+        self.sliceCursorLabel = QLabel(str(self.slideCursor.value()))
 
         self.slideCursor.valueChanged.connect(self.updateSliceIndex)
 
         self.sliceSelectionBox.addWidget(self.label_cursor)
         self.sliceSelectionBox.addWidget(self.slideCursor)
         self.sliceSelectionBox.addWidget(self.sliceCursorLabel)
-        
-
 
         # put it together in the optionSelectionBox
-        
         self.optionSelectionBox.addLayout(self.labelSelectionBox)
         self.optionSelectionBox.addLayout(self.axisSelectionBox)
         self.optionSelectionBox.addLayout(self.sliceSelectionBox)
 
-        # put it together in the explainationBox
-
-        self.explainationBox.addWidget(self.introLabel)
-        self.explainationBox.addWidget(self.step1Label)
-        self.explainationBox.addLayout(self.directorySelectionBox)
-        self.explainationBox.addWidget(self.step2Label)
-        self.explainationBox.addLayout(self.optionSelectionBox)
+        # put it together in the explanationBox
+        self.explanationBox.addWidget(self.introLabel)
+        self.explanationBox.addWidget(self.step1Label)
+        self.explanationBox.addLayout(self.directorySelectionBox)
+        self.explanationBox.addWidget(self.step2Label)
+        self.explanationBox.addLayout(self.optionSelectionBox)
 
 
         ############################# EXPLAINATIONAND OPTIONS BOX ##############################
-        ########################################################################################    
+        ########################################################################################
 
 
         ########################################################################################
         ################################ GT VIEWER in LeftBox ##################################
 
-        
         self.GT_loaded_plot = Viewer(self)
         GTLabel=QLabel("Ground Truth")
         GTLabel.setAlignment(Qt.AlignCenter)
@@ -190,7 +180,7 @@ class MainWindow(QMainWindow):
         self.wavelossAttention_loaded_plot = Viewer(self)
         self.wavelossAttentionLayout.addWidget(self.wavelossAttention_loaded_plot)
         # dice label
-        self.wavelossAttentionDICELabel=QLabel("")
+        self.wavelossAttentionDICELabel = QLabel("")
         self.wavelossAttentionDICELabel.setAlignment(Qt.AlignCenter)
         self.wavelossAttentionLayout.addWidget(self.wavelossAttentionDICELabel)
         self.attentionDisplayBox.addLayout(self.wavelossAttentionLayout)
@@ -200,14 +190,14 @@ class MainWindow(QMainWindow):
         self.baselineAttentionLayout = QVBoxLayout()
         self.baselineAttentionLayout.setAlignment(Qt.AlignTop)
         # label
-        wavelossLabel=QLabel("Baseline with Attention")
+        wavelossLabel = QLabel("Baseline with Attention")
         wavelossLabel.setAlignment(Qt.AlignCenter)
         self.baselineAttentionLayout.addWidget(wavelossLabel)
         # Viewer
         self.baselineAttention_loaded_plot = Viewer(self)
         self.baselineAttentionLayout.addWidget(self.baselineAttention_loaded_plot)
         # dice label
-        self.wavelossDICELabel=QLabel("")
+        self.wavelossDICELabel = QLabel("")
         self.wavelossDICELabel.setAlignment(Qt.AlignCenter)
         self.baselineAttentionLayout.addWidget(self.wavelossDICELabel)
         self.attentionDisplayBox.addLayout(self.baselineAttentionLayout)
@@ -219,14 +209,14 @@ class MainWindow(QMainWindow):
         self.wavelossLayout = QVBoxLayout()
         self.wavelossLayout.setAlignment(Qt.AlignTop)
         # label
-        baselineAttentionLabel=QLabel("Waveloss without Attention")
+        baselineAttentionLabel = QLabel("Waveloss without Attention")
         baselineAttentionLabel.setAlignment(Qt.AlignCenter)
         self.wavelossLayout.addWidget(baselineAttentionLabel)
         # Viewer
         self.waveloss_loaded_plot = Viewer(self)
         self.wavelossLayout.addWidget(self.waveloss_loaded_plot)
         # dice label
-        self.baselineAttentionDICELabel=QLabel("")  
+        self.baselineAttentionDICELabel = QLabel("")
         self.baselineAttentionDICELabel.setAlignment(Qt.AlignCenter)
         self.wavelossLayout.addWidget(self.baselineAttentionDICELabel)  
         self.noAttentionDisplayBox.addLayout(self.wavelossLayout)
@@ -236,27 +226,23 @@ class MainWindow(QMainWindow):
         self.baselineLayout = QVBoxLayout()
         self.baselineLayout.setAlignment(Qt.AlignTop)
         # label
-        baselineLabel=QLabel("Baseline without Attention")
+        baselineLabel = QLabel("Baseline without Attention")
         baselineLabel.setAlignment(Qt.AlignCenter)
         self.baselineLayout.addWidget(baselineLabel)
         # Viewer
         self.baseline_loaded_plot = Viewer(self)
         self.baselineLayout.addWidget(self.baseline_loaded_plot)
         # dice label
-        self.baselineDICELabel=QLabel("") 
+        self.baselineDICELabel = QLabel("")
         self.baselineDICELabel.setAlignment(Qt.AlignCenter)
         self.baselineLayout.addWidget(self.baselineDICELabel)
         self.noAttentionDisplayBox.addLayout(self.baselineLayout)
         
          
-
-        
         ################################## RESULT DISPLAY BOX ##################################
         ########################################################################################
 
         # Put everything in the mainBox
-        
-        #self.leftBox.addLayout(self.directorySelectionBox)
         self.leftBox.addLayout(self.GTViewerBox)
         self.rightBox.addLayout(self.attentionDisplayBox)
         self.rightBox.addLayout(self.noAttentionDisplayBox)
@@ -264,19 +250,20 @@ class MainWindow(QMainWindow):
         self.mainHorizontalBox.addLayout(self.leftBox, stretch=1)
         self.mainHorizontalBox.addLayout(self.rightBox, stretch=2)
         
-        self.mainBox.addLayout(self.explainationBox)
+        self.mainBox.addLayout(self.explanationBox)
         self.mainBox.addLayout(self.mainHorizontalBox)
         self.centralWidget.setLayout(self.mainBox)
 
+        # disable resizing
         self.setFixedSize(QSize(850, 770))
     
     ######################################### INIT #########################################
     ########################################################################################
 
 
-
     ########################################################################################
     #################################### TOOL FUNCTIONS ####################################
+
 
     def clearViews(self) : 
         #print("[DEBUG] clearViews")
@@ -291,11 +278,11 @@ class MainWindow(QMainWindow):
         self.baselineAttentionDICELabel.setText("")
         self.baselineDICELabel.setText("")
 
-    def updateViews(self) :
+    def updateViews(self):
         #print("[DEBUG] updateViews")
-        if self.patient_index == -1 : # If no patient is selected
+        if self.patient_index == -1:  # If no patient is selected
             pass
-        else :
+        else:
             axis = self.combobox_axis.currentIndex()
             layer = self.combobox_layer.currentIndex()
             slice_index = self.slideCursor.value()
@@ -304,18 +291,18 @@ class MainWindow(QMainWindow):
             self.wavelossAttention_loaded_plot.display(self.wavelossAttentionOutput.getSlice(layer, axis, slice_index))
             self.baselineAttention_loaded_plot.display(self.baselineAttentionOutput.getSlice(layer, axis, slice_index))
             self.waveloss_loaded_plot.display(self.wavelossOutput.getSlice(layer, axis, slice_index))
-            self.baseline_loaded_plot.display (self.baselineOutput.getSlice(layer, axis, slice_index))
+            self.baseline_loaded_plot.display(self.baselineOutput.getSlice(layer, axis, slice_index))
     
     def updatePatient(self):
         #print("[DEBUG] updatePatient")
-        if self.patient_index + 1 == self.combobox_patient.currentIndex() :
+        if self.patient_index + 1 == self.combobox_patient.currentIndex():
             pass
-        else : 
-            self.patient_index = self.combobox_patient.currentIndex() -1
-            print (self.patient_index)
-            if self.patient_index == -1 : 
+        else:
+            self.patient_index = self.combobox_patient.currentIndex() - 1
+            print(self.patient_index)
+            if self.patient_index == -1:
                 self.clearViews()
-            else :
+            else:
                 self.groundTruth = Data(os.path.join(self.directory, self.truth_directory, self.prefix + self.combobox_patient.currentText() + self.gt_end))
                 self.wavelossAttentionOutput = Data(os.path.join(self.directory, self.result_directory, "waveloss_attention", self.prefix + self.combobox_patient.currentText() + self.result_end))
                 self.wavelossOutput = Data(os.path.join(self.directory, self.result_directory, "waveloss_no_attention", self.prefix + self.combobox_patient.currentText() + self.result_end))
@@ -328,30 +315,21 @@ class MainWindow(QMainWindow):
                 self.baselineAttentionDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.baselineAttentionOutput.getData())))
                 self.baselineDICELabel.setText("dice : " + str(utils.weighted_dice_coefficient(y_true, self.baselineOutput.getData())))
                 self.updateViews()
-      
-        
-    
-    def updateSliceIndex(self) : 
+
+    def updateSliceIndex(self):
         #print("[DEBUG] updateSliceIndex")
-        self.slice_index = self.slideCursor.value()
-        self.sliceCursorLabel.setText(str(self.slice_index))
+        self.sliceCursorLabel.setText(str(self.slideCursor.value()))
         self.updateViews()
 
-    
-
-    
-    
-
-#################################### TOOL FUNCTIONS ####################################
-########################################################################################
-
+    #################################### TOOL FUNCTIONS ####################################
+    ########################################################################################
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = MainWindow(app)
     ex.show()
-    sys.exit(app.exec_( ))
+    sys.exit(app.exec_())
 
 
 

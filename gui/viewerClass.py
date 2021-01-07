@@ -5,6 +5,7 @@ from PyQt5.QtGui import QImage, QPixmap
 
 VIEWER_SIZE = (250, 250)
 
+
 # Class that shows the image
 class Viewer(QGraphicsView):
     def __init__(self, parent=None):
@@ -17,22 +18,27 @@ class Viewer(QGraphicsView):
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHeightForWidth(True)
         self.setSizePolicy(sizePolicy)
+
+        # create a label that will show the image
         self.frame = QLabel()
         self.frame.setAlignment(Qt.AlignHCenter)
         self.frame.setMinimumHeight(250)
         self.frame.setMinimumWidth(250)
         self.frame.setSizePolicy(sizePolicy)
 
+        # create layout
         layout = QHBoxLayout()
         layout.addWidget(self.frame)
         layout.addSpacing(5)
         self.setLayout(layout)
 
+    # display given image, applies transformation from binary to uint8 and resize for the view size
     def display(self, slice):
-        slice = (slice * 255).astype(dtype="int8")
+        slice = (slice * 255).astype(dtype="uint8")
         pixmap = QPixmap.fromImage(QImage(slice.data, slice.shape[1], slice.shape[0], QImage.Format_Grayscale8))
         pixmap = pixmap.scaledToWidth(self.width() - 25)
         self.frame.setPixmap(pixmap)
-    
+
+    # sets an empty image
     def clearDisplay(self):
         self.display(np.zeros((128, 128, 128)))
