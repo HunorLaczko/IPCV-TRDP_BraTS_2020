@@ -1,5 +1,6 @@
 import sys
 import os
+import platform
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -256,7 +257,11 @@ class MainWindow(QMainWindow):
         self.centralWidget.setLayout(self.mainBox)
 
         # disable resizing
-        self.setFixedSize(QSize(900, 900))
+        # needs different size for different platforms because of PyQt has different behaviour
+        if platform.system() == 'Windows':
+            self.setFixedSize(QSize(900, 820))
+        else:
+            self.setFixedSize(QSize(900, 900))
     
     ######################################### INIT #########################################
     ########################################################################################
