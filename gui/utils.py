@@ -1,14 +1,14 @@
 import sys
 import os
-import fnmatch
-import shutil
-import mega
 import numpy as np
 sys.path.append(os.path.abspath('../src'))
-#import inference
 from unet3d.utils.utils import read_image
 from config_gui import config
 
+
+def weighted_dice_coefficient(y_true, y_pred, axis=(-3, -2, -1), smooth=0.00001):
+    return np.mean(2. * (np.sum(y_true * y_pred, axis=axis) + smooth/2) /
+                   (np.sum(y_true, axis=axis) + np.sum(y_pred, axis=axis) + smooth))
 
 
 def separate_labels(input):
