@@ -1,11 +1,12 @@
 import math
 from functools import partial
+import numpy as np
 
 from keras import backend as K
 from keras.callbacks import ModelCheckpoint, CSVLogger, LearningRateScheduler, ReduceLROnPlateau, EarlyStopping, TensorBoard
 from keras.models import load_model
 
-from unet3d.metrics import (dice_coefficient, dice_coefficient_loss, dice_coef, dice_coef_loss,
+from unet3d.metrics import (dice_coefficient, dice_coefficient_loss, dice_coef, dice_coef_loss, waveloss,
                             weighted_dice_coefficient_loss, weighted_dice_coefficient, get_label_dice_coefficient_function)
 
 
@@ -17,7 +18,6 @@ K.image_data_format()
 # learning rate schedule
 def step_decay(epoch, initial_lrate, drop, epochs_drop):
     return initial_lrate * math.pow(drop, math.floor((1+epoch)/float(epochs_drop)))
-
 
 def get_callbacks(model_file, initial_learning_rate=0.0001, learning_rate_drop=0.5, learning_rate_epochs=None,
                   learning_rate_patience=50, logging_file="training.log", verbosity=1,
@@ -48,7 +48,8 @@ def load_old_model(model_file):
                       'weighted_dice_coefficient_loss': weighted_dice_coefficient_loss,
                       'label_0_dice_coef': get_label_dice_coefficient_function(0),
                       'label_1_dice_coef': get_label_dice_coefficient_function(1),
-                      'label_2_dice_coef': get_label_dice_coefficient_function(2)}
+                      'label_2_dice_coef': get_label_dice_coefficient_function(2),
+                      '_waveloss': waveloss(np.geomspace(0.1, 1, 10), np.geomspace(0.1, 1, 10), ValInc=0.1, SpaInc=5, NumSteps=10, labelwise=False)}
     try:
         from keras_contrib.layers import InstanceNormalization
         custom_objects["InstanceNormalization"] = InstanceNormalization

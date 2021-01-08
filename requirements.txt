@@ -1,0 +1,15 @@
+Keras==2.4.3
+keras-contrib @ git+https://www.github.com/keras-team/keras-contrib.git@3fc5ef709e061416f4bc8a92ca3750c824b5d2b0
+matplotlib==3.3.3
+mega.py==1.0.8
+nibabel==3.2.1
+nilearn==0.7.0
+numpy==1.19.3
+pandas==1.1.5
+Pillow==8.1.0
+PyQt5==5.15.2
+scikit-learn==0.24.0
+scipy==1.5.4
+SimpleITK==2.0.2
+tables==3.6.1
+tensorflow==2.4.0

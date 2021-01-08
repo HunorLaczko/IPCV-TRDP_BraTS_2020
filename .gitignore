@@ -2,3 +2,11 @@
 *.pyc
 
 *.code-workspace
+
+.idea/
+gui/.idea/
+src/.idea/
+gui/models/
+gui/data/
+gui/output/
+gui/tmp/

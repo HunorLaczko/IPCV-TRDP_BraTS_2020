@@ -7,9 +7,9 @@ from unet3d.data_test import write_data_to_file, open_data_file
 from unet3d.prediction import run_validation_cases
 from unet3d.utils.utils import pickle_dump, pickle_load
 
-from config_train import config
-    
-def fetch_testing_data_files(return_subject_ids=False):
+from config_train import config as default_config
+
+def fetch_testing_data_files(config, return_subject_ids=False):
     testing_data_files = list()
     subject_ids = list()
     # processed_dir = config["preprocessed_test"]
@@ -28,14 +28,12 @@ def fetch_testing_data_files(return_subject_ids=False):
         return testing_data_files
     
 
-def main(overwrite=False):
+def main(config):
     
     # convert test images into an hdf5 file
-    if overwrite or not os.path.exists(config["data_file_test"]):
-        testing_files, subject_ids = fetch_testing_data_files(return_subject_ids=True)
+    if not os.path.exists(config["data_file_test"]):
+        testing_files, subject_ids = fetch_testing_data_files(config, return_subject_ids=True)
 
-        #write_data_to_file(testing_files, config["data_file_test"], image_shape=config["image_shape"],
-                           #subject_ids=subject_ids)
         write_data_to_file(testing_files, config["data_file_test"], image_shape=config["image_shape"],
                            subject_ids=subject_ids)
     
@@ -45,15 +43,15 @@ def main(overwrite=False):
 
     data_file_opened = open_data_file(config["data_file_test"])
     
-    prediction_dir = config["output_dir"]
     run_validation_cases(test_keys_file,
                          model_file=config["model_file"],
                          training_modalities=config["training_modalities"],
                          labels=config["labels"],
                          hdf5_file=config["data_file_test"],
                          output_label_map=True,
-                         output_dir=prediction_dir)
+                         test_dir=config["test_dir"],
+                         output_dir=config["output_dir"])
 
 
 if __name__ == "__main__":
-    main(overwrite=config["overwrite"])
+    main(default_config)

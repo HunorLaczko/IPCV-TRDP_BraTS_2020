@@ -11,7 +11,7 @@ from .augment import permute_data, generate_permutation_keys, reverse_permute_da
 
 from nilearn.image import resample_to_img, smooth_img
 
-from config import config
+from config_train import config
 
 
 def patch_wise_prediction(model, data, overlap=0, batch_size=1, permute=False):
@@ -103,7 +103,7 @@ def multi_class_prediction(prediction, affine):
     return prediction_images
 
 
-def run_validation_case(data_index, output_dir, model, data_file, training_modalities,
+def run_validation_case(data_index, test_dir, output_dir, model, data_file, training_modalities,
                         output_label_map=False, threshold=0.5, labels=None, overlap=16, permute=False):
     """
     Runs a test case and writes predicted images to file.
@@ -141,19 +141,19 @@ def run_validation_case(data_index, output_dir, model, data_file, training_modal
     # Azam: Back to original prediction image
     # Source: https://github.com/ellisdg/3DUnetCNN/issues/142
     # the template is the image whose dimensions u want to resample to, here 'img_template' is the sample image
-    img_template = os.path.join(config["test_dir"], os.path.basename(output_dir), os.path.basename(output_dir) + '_t1ce.nii.gz')
+    img_template = os.path.join(test_dir, os.path.basename(output_dir), os.path.basename(output_dir) + '_t1ce.nii.gz')
     prediction_image = resample_to_img(prediction_image, img_template, interpolation="nearest")
     
     if isinstance(prediction_image, list):
         for i, image in enumerate(prediction_image):
             image.to_filename(os.path.join(output_dir, "prediction_{0}.nii".format(i + 1)))
     else:
-        file_name = os.path.join(config['output_dir'], os.path.basename(output_dir) + ".nii.gz")
+        file_name = output_dir + ".nii.gz"
         prediction_image.to_filename(file_name) # /data/output/0089_output.nii
 
 
 def run_validation_cases(validation_keys_file, model_file, training_modalities, labels, hdf5_file,
-                         output_label_map=False, output_dir=".", threshold=0.5, overlap=16, permute=False):
+                         output_label_map=False, test_dir=".", output_dir=".", threshold=0.5, overlap=16, permute=False):
     validation_indices = pickle_load(validation_keys_file)
     model = load_old_model(model_file)
     data_file = tables.open_file(hdf5_file, "r")
@@ -162,7 +162,7 @@ def run_validation_cases(validation_keys_file, model_file, training_modalities, 
             case_directory = os.path.join(output_dir, data_file.root.subject_ids[index].decode('utf-8'))
         else:
             case_directory = os.path.join(output_dir, "validation_case_{}".format(index))
-        run_validation_case(data_index=index, output_dir=case_directory, model=model, data_file=data_file,
+        run_validation_case(data_index=index, test_dir=test_dir, output_dir=case_directory, model=model, data_file=data_file,
                             training_modalities=training_modalities, output_label_map=output_label_map, labels=labels,
                             threshold=threshold, overlap=overlap, permute=permute)
     data_file.close()
