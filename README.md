@@ -55,6 +55,13 @@ $ ./train.sh
 $ ./inference.sh
 ~~~
 
+## Modifications
+- Update code for latest version of Keras and tensorflow
+- Add CBAM module based on [CBAM-keras](https://github.com/kobiso/CBAM-keras)
+- Add Waveloss as custom loss function
+- Add new config options
+- Create GUI to compare models
+
 ## Acknowledgment
 This is a copy of [akhanss' repository](https://github.com/akhanss/BraTS-2020) which was updated and slightly modified.
 
